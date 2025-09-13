@@ -1,0 +1,45 @@
+---
+---
+
+// Override ALL font variables to use browser defaults
+$base-font-family: sans-serif;
+$base-font-size: 16px;
+$base-font-weight: 400;
+$small-font-size: $base-font-size * 0.875;
+$base-line-height: 1.5;
+
+// Override monospace to use browser default monospace
+$monospace-font-family: monospace;
+
+// Import minima after setting variables
+@import "minima";
+
+// Additional overrides to ensure ALL fonts use browser defaults
+body, html {
+  font-family: sans-serif !important;
+}
+
+// Override headings to use browser default sans-serif
+h1, h2, h3, h4, h5, h6 {
+  font-family: sans-serif !important;
+}
+
+// Override code and pre elements to use browser default monospace
+pre, code, .highlight {
+  font-family: monospace !important;
+}
+
+// Override any remaining specific font declarations
+.site-title, .site-nav, .page-link {
+  font-family: sans-serif !important;
+}
+
+// Override post content fonts
+.post-content, .post-title, .post-meta {
+  font-family: sans-serif !important;
+}
+
+// Override footer fonts
+.site-footer {
+  font-family: sans-serif !important;
+}

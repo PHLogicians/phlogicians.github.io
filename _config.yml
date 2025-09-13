@@ -1,0 +1,16 @@
+theme: minima
+title: PHGameStudio
+description: Website for PHGameStudio
+url: "https://phgamestudio.github.io"
+header_pages:
+  - index.md
+exclude:
+  - README.md
+  - _site/
+  - .sass-cache/
+  - .jekyll-cache/
+  - .jekyll-metadata
+  - .bundle/
+  - Gemfile.lock
+kramdown:
+  math_engine: mathjax
