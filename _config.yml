@@ -4,6 +4,7 @@ description: Website for PHLogicians
 url: "https://phlogicians.github.io"
 header_pages:
   - index.md
+  - ph-ormula.md
 exclude:
   - README.md
   - _site/
