@@ -1,4 +1,4 @@
-# PHGameStudio.github.io
+# PHLogicians.github.io
 
 ## 1. Quick Start (for organization members)
 
@@ -6,8 +6,8 @@
 
 ```
 # 1 · clone this repository
-git clone https://github.com/PHGameStudio/phgamestudio.github.io
-cd phgamestudio.github.io
+git clone https://github.com/PHLogicians/phlogicians.github.io
+cd phlogicians.github.io
 
 # 2 · install gems into .bundle/ (no sudo required)
 bundle config set --local path '.bundle'

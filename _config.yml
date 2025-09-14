@@ -1,7 +1,7 @@
 theme: minima
-title: PHGameStudio
-description: Website for PHGameStudio
-url: "https://phgamestudio.github.io"
+title: PHLogicians
+description: Website for PHLogicians
+url: "https://phlogicians.github.io"
 header_pages:
   - index.md
 exclude:
