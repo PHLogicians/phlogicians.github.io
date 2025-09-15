@@ -1,10 +1,14 @@
-theme: minima
+remote_theme: jekyll/minima
+plugins: 
+  - jekyll-remote-theme
+minima:
+  skin: auto
+  nav_pages:
+    - index.md
+    - ph-ormula.md
 title: PHLogicians
 description: Website for PHLogicians
 url: "https://phlogicians.github.io"
-header_pages:
-  - index.md
-  - ph-ormula.md
 exclude:
   - README.md
   - _site/
