@@ -6,4 +6,4 @@ permalink: /about/
 
 # 这个社团应该关于逻*辑吧*
 
-![](https://ph-ormula.github.io/images/Jibba.png){: width="85%"}
+![](https://ph-ormula.github.io/easter-eggs/Jibba.png){: width="85%"}
