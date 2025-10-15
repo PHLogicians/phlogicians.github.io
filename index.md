@@ -5,6 +5,8 @@ title: Home
 
 # PHLogicians
 
+[逻辑学赋能专业学习 — 数学](/lectures/logic-help-math/)
+
 [Stanford Introduction to Logic](http://intrologic.stanford.edu/public/lessons.php)
 
 ![](/images/poster.png){: width="60%"}

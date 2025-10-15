@@ -8,12 +8,26 @@
 		{%- include header.html -%}
 
 		<main class="page-content" aria-label="Content">
-			<div class="wrapper">
-				{{ content }}
+			<div class="wrapper{% if page.toc %} with-toc{% endif %}">
+				{% if page.toc %}
+				<aside class="page-toc">
+					<nav class="toc-nav">
+						<div class="toc-title">Contents</div>
+						<div id="toc-list"></div>
+					</nav>
+				</aside>
+				{% endif %}
+				<div class="page-main-content">
+					{{ content }}
+				</div>
 			</div>
 		</main>
 
 		{%- include footer.html -%}
+
+		{% if page.toc %}
+		<script src="{{ "/assets/js/toc.js" | relative_url }}"></script>
+		{% endif %}
 
 	</body>
 

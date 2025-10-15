@@ -3,6 +3,8 @@ minima:
   skin: auto
   nav_pages:
     - index.md
+    - lectures.md
+    - resources.md
     - ph-ormula.md
 title: PHLogicians
 description: Website for PHLogicians
