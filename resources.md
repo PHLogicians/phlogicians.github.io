@@ -7,3 +7,4 @@ permalink: /resources/
 # Resources
 
 - [Stanford Introduction to Logic](http://intrologic.stanford.edu/public/lessons.php)
+- [SAT Vector Analyzer](/resources/sat-vector-analyzer.html)

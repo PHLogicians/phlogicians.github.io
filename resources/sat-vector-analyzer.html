@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html>
+<!--
+	SAT Vector Analyzer with Origin Vectors
+	
+	⚠️ IMPORTANT: To avoid CORS errors and model loading failures, 
+	run this file through a local web server instead of opening it directly.
+	
+	Quick start:
+	1. Run: python3 -m http.server 8000
+	   (or use the start_server.sh script)
+	2. Open: http://localhost:8000/index.html
+	
+	See README.md for more details.
+-->
+<head>
+	<meta charset="UTF-8">
+	<title>SAT Vector Analyzer with Origin Vectors</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+	<script type="module">
+		// Load transformers v2.17.2 as ES6 module and expose globally
+		import * as transformers from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js';
+		window.transformers = transformers;
+		console.log('✓ Transformers v2.17.2 loaded successfully');
+	</script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						primary: '#165DFF',
+						'primary-light': '#E8F3FF',
+						'primary-dark': '#0E42CC',
+						secondary: '#36CFC9',
+						accent: '#722ED1',
+						neutral: '#F5F7FA',
+						dark: '#1D2129',
+						light: '#FFFFFF',
+						border: '#E2E8F0',
+						success: '#52C41A',
+						info: '#1890FF',
+						warning: '#FAAD14',
+						vector: '#FF4D4F' // 向量线条颜色
+					},
+					fontFamily: {
+						sans: ['Inter', 'system-ui', 'sans-serif'],
+					},
+					boxShadow: {
+						'card': '0 10px 15px -3px rgba(22, 93, 255, 0.05), 0 4px 6px -2px rgba(22, 93, 255, 0.03)',
+						'card-hover': '0 20px 25px -5px rgba(22, 93, 255, 0.1), 0 10px 10px -5px rgba(22, 93, 255, 0.04)',
+						'button': '0 4px 14px 0 rgba(22, 93, 255, 0.3)',
+						'button-hover': '0 6px 20px 0 rgba(22, 93, 255, 0.4)',
+						'input': '0 2px 5px rgba(22, 93, 255, 0.05)',
+					}
+				}
+			}
+		}
+	</script>
+	<style type="text/tailwindcss">
+		@layer utilities {
+			.content-auto {
+				content-visibility: auto;
+			}
+			.blue-gradient {
+				background: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
+			}
+			.text-shadow {
+				text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+			.card-transition {
+				transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			}
+			.input-focus {
+				@apply focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none;
+			}
+			.btn-primary {
+				@apply bg-primary hover:bg-primary-dark text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-button hover:shadow-button-hover flex items-center justify-center;
+			}
+			.btn-secondary {
+				@apply bg-white border border-primary text-primary hover:bg-primary-light font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center;
+			}
+			.add-btn {
+				@apply w-10 h-10 rounded-full bg-primary-light text-primary flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-primary hover:text-white active:scale-95 shadow-sm;
+			}
+			.decorative-element {
+				position: absolute;
+				border-radius: 50%;
+				background: rgba(22, 93, 255, 0.05);
+				z-index: 0;
+			}
+			.plot-container {
+				min-height: 500px;
+				width: 100%;
+			}
+			.model-tooltip {
+				@apply invisible absolute bg-dark text-white text-xs rounded py-1 px-2 w-64 -mt-20 ml-4 z-50 opacity-0 transition-opacity duration-200 pointer-events-none;
+			}
+			.model-option:hover .model-tooltip {
+				@apply visible opacity-100;
+			}
+			.text-gradient {
+				background-clip: text;
+				-webkit-background-clip: text;
+				color: transparent;
+				background-image: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
+			}
+			.card-hover-effect {
+				@apply transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1;
+			}
+			.input-field {
+				@apply w-full p-3 border border-border rounded-lg resize-none input-focus transition-all duration-200 shadow-input placeholder-gray-400;
+			}
+			.large-input-field {
+				@apply input-field min-h-[180px];
+			}
+			.medium-input-field {
+				@apply input-field min-h-[150px];
+			}
+			.section-title {
+				@apply text-lg font-semibold flex items-center text-dark;
+			}
+			.floating {
+				animation: floating 6s ease-in-out infinite;
+			}
+			@keyframes floating {
+				0% { transform: translateY(0px); }
+				50% { transform: translateY(-10px); }
+				100% { transform: translateY(0px); }
+			}
+			.pulse {
+				animation: pulse 2s infinite;
+			}
+			@keyframes pulse {
+				0% { transform: scale(1); }
+				50% { transform: scale(1.05); }
+				100% { transform: scale(1); }
+			}
+			.gradient-border {
+				position: relative;
+				border-radius: 0.75rem;
+				z-index: 0;
+			}
+			.gradient-border::before {
+				content: "";
+				position: absolute;
+				inset: -2px;
+				border-radius: 0.85rem;
+				background: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
+				z-index: -1;
+				opacity: 0;
+				transition: opacity 0.3s ease;
+			}
+			.gradient-border:hover::before {
+				opacity: 1;
+			}
+			.progress-container {
+				height: 8px;
+				background-color: #e2e8f0;
+				border-radius: 4px;
+				overflow: hidden;
+			}
+			.progress-bar {
+				height: 100%;
+				background-color: #165DFF;
+				width: 0%;
+				transition: width 0.3s ease;
+			}
+			.prediction-card {
+				@apply bg-white border-2 rounded-xl p-6 mt-6 shadow-lg transform transition-all duration-500 hover:shadow-xl;
+			}
+			.prediction-card.primary {
+				@apply border-success;
+			}
+			.prediction-card.secondary {
+				@apply border-info;
+			}
+			.prediction-card.tertiary {
+				@apply border-warning;
+			}
+			.option-distance {
+				@apply p-3 rounded-lg transition-all duration-300;
+			}
+			.option-distance.correct {
+				@apply bg-success/10 border-2 border-success;
+			}
+			.option-distance.correct-secondary {
+				@apply bg-info/10 border-2 border-info;
+			}
+			.option-distance.correct-tertiary {
+				@apply bg-warning/10 border-2 border-warning;
+			}
+		}
+	</style>
+</head>
+<body class="bg-neutral min-h-screen font-sans text-dark relative overflow-x-hidden">
+	<!-- 装饰性蓝色元素 -->
+	<div class="decorative-element w-64 h-64 top-20 -left-32 floating"></div>
+	<div class="decorative-element w-96 h-96 bottom-20 -right-48 floating" style="animation-delay: 2s;"></div>
+	<div class="decorative-element w-32 h-32 top-1/3 right-1/4 floating" style="animation-delay: 4s;"></div>
+	
+	<!-- 顶部导航栏 -->
+	<header class="bg-white/80 backdrop-blur-md border-b border-border sticky top-0 z-50 shadow-sm transition-all duration-300">
+		<div class="container mx-auto px-4 py-4 flex justify-between items-center relative z-10">
+			<h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold flex items-center">
+				<i class="fa fa-cube text-primary mr-3 text-xl"></i>
+				<span class="text-gradient">SAT Vector Analyzer</span>
+			</h1>
+			<div class="flex items-center space-x-4">
+				<span class="hidden md:inline-flex items-center text-sm text-gray-600 bg-primary-light/50 px-3 py-1 rounded-full">
+					<i class="fa fa-check-circle text-success mr-1"></i>
+					With Origin Vectors
+				</span>
+			</div>
+		</div>
+	</header>
+
+	<main class="container mx-auto px-4 py-10 relative z-10">
+		<!-- 顶部横幅 -->
+		<div class="blue-gradient rounded-2xl p-8 mb-10 text-white shadow-lg relative overflow-hidden transform transition-all duration-500 hover:shadow-xl">
+			<div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+			<div class="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full -ml-20 -mb-20"></div>
+			<div class="relative z-10">
+				<h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold mb-3 text-shadow">SAT Answer Prediction</h2>
+				<p class="max-w-2xl opacity-90">
+					Visualizing vertices with vectors from origin (0,0,0) and using cosine similarity:
+				</p>
+				<ul class="list-disc list-inside mt-3 space-y-1 opacity-90">
+					<li>3D空间中选项点到题目逻辑空间的距离</li>
+					<li>高维空间(768维)中选项点到题目逻辑空间的距离</li>
+					<li>合并所有句子为大段落的向量与选项向量的余弦相似度</li>
+				</ul>
+			</div>
+		</div>
+		
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+			<!-- 左侧：添加句子区域 -->
+			<section class="bg-white rounded-xl p-6 shadow-card card-transition gradient-border card-hover-effect relative overflow-hidden">
+				<div class="absolute top-0 right-0 w-32 h-32 bg-primary-light/30 rounded-full -mr-16 -mt-16"></div>
+				<div class="flex justify-between items-center mb-6 relative z-10">
+					<h2 class="section-title">
+						<i class="fa fa-comment-o text-primary mr-2"></i>
+						Sentence Input
+					</h2>
+					<button id="add-sentence" class="add-btn">
+						<i class="fa fa-plus"></i>
+					</button>
+				</div>
+				
+				<div id="sentences-container" class="space-y-6 relative z-10">
+					<div class="sentence-item group">
+						<div class="flex items-start">
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">1</div>
+							<div class="flex-grow relative">
+								<textarea 
+									class="large-input-field"
+									placeholder="Enter sentence here..."
+									data-sentence
+								>The Industrial Revolution, which began in Britain in the late 18th century, fundamentally transformed society by introducing mechanized production methods that replaced traditional hand-crafted manufacturing processes.</textarea>
+							</div>
+							<button class="remove-btn flex-shrink-0 w-6 h-6 text-gray-400 hover:text-red-500 transition-colors duration-200 opacity-0 group-hover:opacity-100 ml-2" data-remove>
+								<i class="fa fa-times"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- 中间：添加题干区域 -->
+			<section class="bg-white rounded-xl p-6 shadow-card card-transition gradient-border card-hover-effect relative overflow-hidden">
+				<div class="absolute top-0 right-0 w-32 h-32 bg-primary-light/30 rounded-full -mr-16 -mt-16"></div>
+				<div class="flex justify-between items-center mb-6 relative z-10">
+					<h2 class="section-title">
+						<i class="fa fa-file-text-o text-primary mr-2"></i>
+						Question Stem Input
+					</h2>
+					<button id="add-stem" class="add-btn">
+						<i class="fa fa-plus"></i>
+					</button>
+				</div>
+				
+				<div id="stems-container" class="space-y-6 relative z-10">
+					<div class="stem-item group">
+						<div class="flex items-start">
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">1</div>
+							<div class="flex-grow relative">
+								<textarea 
+									class="medium-input-field p-4"
+									placeholder="Enter question stem here..."
+									data-stem
+								>Based on the passage, which of the following best describes the primary impact of the Industrial Revolution?</textarea>
+							</div>
+							<button class="remove-btn flex-shrink-0 w-6 h-6 text-gray-400 hover:text-red-500 transition-colors duration-200 opacity-0 group-hover:opacity-100 ml-2" data-remove>
+								<i class="fa fa-times"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- 右侧：添加选项区域 -->
+			<section class="bg-white rounded-xl p-6 shadow-card card-transition gradient-border card-hover-effect relative overflow-hidden">
+				<div class="absolute top-0 right-0 w-32 h-32 bg-primary-light/30 rounded-full -mr-16 -mt-16"></div>
+				<div class="flex justify-between items-center mb-6 relative z-10">
+					<h2 class="section-title">
+						<i class="fa fa-list-ul text-primary mr-2"></i>
+						Option Input
+					</h2>
+				</div>
+				
+				<div id="options-container" class="space-y-4 relative z-10">
+					<div class="option-item group">
+						<div class="flex items-start">
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">A</div>
+							<div class="flex-grow relative">
+								<textarea 
+									class="input-field min-h-[80px]"
+									placeholder="Option A..."
+									data-option
+								>It led to a shift from manual labor to automated manufacturing systems.</textarea>
+							</div>
+						</div>
+					</div>
+					
+					<div class="option-item group">
+						<div class="flex items-start">
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">B</div>
+							<div class="flex-grow relative">
+								<textarea 
+									class="input-field min-h-[80px]"
+									placeholder="Option B..."
+									data-option
+								>It resulted in increased agricultural productivity and rural population growth.</textarea>
+							</div>
+						</div>
+					</div>
+					
+					<div class="option-item group">
+						<div class="flex items-start">
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">C</div>
+							<div class="flex-grow relative">
+								<textarea 
+									class="input-field min-h-[80px]"
+									placeholder="Option C..."
+									data-option
+								>It promoted the development of traditional artisan crafts and cottage industries.</textarea>
+							</div>
+						</div>
+					</div>
+					
+					<div class="option-item group">
+						<div class="flex items-start">
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">D</div>
+							<div class="flex-grow relative">
+								<textarea 
+									class="input-field min-h-[80px]"
+									placeholder="Option D..."
+									data-option
+								>It decreased the overall production capacity of British manufacturing.</textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		
+		<!-- 模型选择和可视化按钮 -->
+		<div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+			<div class="w-full sm:w-auto relative">
+				<label for="model-selector" class="block text-sm font-medium text-gray-700 mb-1">Select Model:</label>
+				<div class="relative">
+					<select id="model-selector" class="block w-full sm:w-80 pl-3 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg input-focus appearance-none shadow-input transition-all duration-200 hover:border-primary/50">
+						<option value="Xenova/all-MiniLM-L6-v2" data-size="80MB" data-dim="384" class="model-option">
+							all-MiniLM-L6-v2 
+							<span class="text-xs text-gray-500 ml-2">(Fast, 80MB, 384dim)</span>
+						</option>
+						<option value="Xenova/all-MiniLM-L12-v2" data-size="160MB" data-dim="384" class="model-option">
+							all-MiniLM-L12-v2 
+							<span class="text-xs text-gray-500 ml-2">(Balanced, 160MB, 384dim)</span>
+						</option>
+						<option value="Xenova/all-mpnet-base-v2" data-size="420MB" data-dim="768" class="model-option">
+							all-mpnet-base-v2 
+							<span class="text-xs text-gray-500 ml-2">(Accurate, 420MB, 768dim)</span>
+						</option>
+					</select>
+					<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+						<i class="fa fa-chevron-down text-gray-400"></i>
+					</div>
+				</div>
+				<p id="model-info" class="mt-1 text-xs text-gray-500 italic">
+					Selected: all-MiniLM-L6-v2 (80MB, 384 dimensions)
+				</p>
+				<p id="model-warning" class="mt-1 text-xs text-warning hidden">
+					⚠️ Large model: First download may take several minutes
+				</p>
+			</div>
+			
+			<div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+				<button id="generate-visualization" class="btn-primary pulse">
+					<i class="fa fa-line-chart mr-2"></i>
+					Generate Analysis & Predict Answers
+				</button>
+				<button id="test-library" class="btn-secondary text-xs">
+					<i class="fa fa-flask mr-1"></i>
+					Test Library
+				</button>
+			</div>
+		</div>
+		
+		<!-- 加载状态和结果显示 -->
+		<div class="bg-white rounded-xl p-6 shadow-card min-h-[500px] flex flex-col items-center justify-center overflow-hidden relative z-10 card-hover-effect">
+			<div class="absolute top-0 right-0 w-48 h-48 bg-primary-light/20 rounded-full -mr-24 -mt-24"></div>
+			
+			<div id="loading" class="text-center hidden relative z-10">
+				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mx-auto mb-6"></div>
+				<p class="text-gray-600 text-lg">Processing data...</p>
+				<p class="text-gray-500 text-sm mt-2">Calculating vectors, geometric shapes, and cosine similarity</p>
+			</div>
+			
+			<div id="library-loading" class="text-center hidden relative z-10">
+				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mx-auto mb-6"></div>
+				<p class="text-gray-600 text-lg">Loading components...</p>
+			</div>
+			
+			<div id="model-loading" class="text-center hidden relative z-10">
+				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mx-auto mb-6"></div>
+				<p class="text-gray-600 text-lg">Loading <span id="current-model-name">sentence-transformers model</span>...</p>
+				<p class="text-gray-500 text-sm mt-2" id="model-size-info">Approximately 80MB, only needs to download once</p>
+			</div>
+			
+			<div id="initial-message" class="text-center text-gray-500 max-w-lg px-4 relative z-10">
+				<div class="w-20 h-20 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-6 floating">
+					<i class="fa fa-cube text-4xl text-primary"></i>
+				</div>
+				<h3 class="text-xl font-medium mb-3 text-dark">Ready to Analyze & Predict</h3>
+				<p>Enter sentences, question stems, and options, then generate analysis. Each point will be displayed with a vector from (0,0,0).</p>
+				<div class="mt-4 p-3 bg-primary-light/50 rounded-lg inline-block">
+					<p class="text-sm text-primary flex items-center">
+						<i class="fa fa-lightbulb-o mr-1"></i>
+						<span>Higher cosine similarity = More relevant</span>
+					</p>
+				</div>
+			</div>
+			
+			<div id="error" class="text-center text-red-500 p-6 hidden max-w-lg relative z-10">
+				<div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+					<i class="fa fa-exclamation-triangle text-2xl text-red-500"></i>
+				</div>
+				<p id="error-message" class="font-medium"></p>
+			</div>
+			
+			<div id="result" class="w-full hidden p-4 relative z-10">
+				<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+					<h3 class="text-lg font-semibold">Interactive 3D Vector Visualization</h3>
+					<div class="flex flex-wrap gap-2">
+						<div class="text-sm bg-primary-light/70 text-primary px-3 py-1 rounded-full flex items-center">
+							<i class="fa fa-check-circle mr-1"></i>
+							<span id="used-model-display">sentence-transformers</span>
+						</div>
+						<div class="text-sm bg-primary-light/70 text-primary px-3 py-1 rounded-full flex items-center">
+							<i class="fa fa-arrows mr-1"></i>
+							<span>Drag to rotate</span>
+						</div>
+						<div class="text-sm text-gray-500 px-3 py-1 rounded-full">
+							<span id="shape-legend">Blue: Sentences | Green: Question Stems | Purple: Options | Red: Origin Vectors | Yellow: Geometric Shape</span>
+						</div>
+					</div>
+				</div>
+				<div class="border border-border rounded-lg overflow-hidden bg-neutral/50 p-2 shadow-input">
+					<div id="plotly-container" class="plot-container"></div>
+				</div>
+				
+				<!-- 三种距离计算的预测结果 -->
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+					<!-- 1. 三维空间中选项点到题目逻辑空间的距离 -->
+					<div id="prediction-geometry" class="prediction-card primary">
+						<h3 class="text-xl font-semibold mb-4 flex items-center">
+							<i class="fa fa-cube text-success mr-2"></i>
+							<span id="geometry-type">3D空间距离</span>
+						</h3>
+						
+						<div class="mb-4">
+							<p class="text-gray-700 mb-2">三维空间中最接近<span id="geometry-reference">题目逻辑空间</span>的选项：</p>
+							<div id="best-option-geometry" class="p-4 bg-success/10 border border-success rounded-lg font-medium"></div>
+						</div>
+						
+						<h4 class="font-medium mb-3">选项到<span id="geometry-label">题目逻辑空间</span>的距离：</h4>
+						<div class="space-y-3" id="option-distances-geometry">
+							<!-- 选项距离将在这里动态生成 -->
+						</div>
+					</div>
+					
+					<!-- 2. 768高维空间中选项点到题目逻辑空间的距离 -->
+					<div id="prediction-highdim-logic" class="prediction-card secondary">
+						<h3 class="text-xl font-semibold mb-4 flex items-center">
+							<i class="fa fa-sitemap text-info mr-2"></i>
+							高维空间距离 (768维)
+						</h3>
+						
+						<div class="mb-4">
+							<p class="text-gray-700 mb-2">高维空间中最接近题目逻辑空间的选项：</p>
+							<div id="best-option-logic" class="p-4 bg-info/10 border border-info rounded-lg font-medium"></div>
+						</div>
+						
+						<h4 class="font-medium mb-3">选项到题目逻辑空间的距离：</h4>
+						<div class="space-y-3" id="option-distances-logic">
+							<!-- 选项距离将在这里动态生成 -->
+						</div>
+					</div>
+					
+					<!-- 3. 合并句子大段落向量与选项的余弦相似度 -->
+					<div id="prediction-combined" class="prediction-card tertiary">
+						<h3 class="text-xl font-semibold mb-4 flex items-center">
+							<i class="fa fa-compress text-warning mr-2"></i>
+							合并句子向量相似度
+						</h3>
+						
+						<div class="mb-4">
+							<p class="text-gray-700 mb-2">与合并句子大段落向量余弦相似度最高的选项：</p>
+							<div id="best-option-combined" class="p-4 bg-warning/10 border border-warning rounded-lg font-medium"></div>
+						</div>
+						
+						<h4 class="font-medium mb-3">与合并句子大段落的余弦相似度：</h4>
+						<div class="space-y-3" id="option-distances-combined">
+							<!-- 选项相似度将在这里动态生成 -->
+						</div>
+					</div>
+				</div>
+				
+				<div class="mt-6 p-4 bg-primary-light/20 rounded-lg">
+					<h4 class="font-medium mb-2 flex items-center">
+						<i class="fa fa-info-circle text-primary mr-2"></i>
+						可视化与指标解释
+					</h4>
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+						<div>
+							<p class="font-medium text-success" id="geometry-explanation-title">3D空间距离：</p>
+							<p class="text-gray-600" id="geometry-explanation">
+								三维空间中每个选项到由所有句子和题干向量形成的几何形状的最小距离。
+							</p>
+						</div>
+						<div>
+							<p class="font-medium text-info">高维空间距离：</p>
+							<p class="text-gray-600">
+								在原始高维向量空间(768维)中，每个选项到题目逻辑空间的距离，即到最近上下文向量的距离。
+							</p>
+						</div>
+						<div>
+							<p class="font-medium text-warning">余弦相似度：</p>
+							<p class="text-gray-600">
+								衡量选项向量与所有句子合并成大段落后的向量之间的相似度（范围：-1到1）。值越高表示语义越相似。
+							</p>
+						</div>
+					</div>
+					<div class="mt-3 text-sm">
+						<p class="font-medium text-vector">原点向量：</p>
+						<p class="text-gray-600">
+							红色线条表示从坐标原点(0,0,0)到每个数据点的向量，展示3D空间中每个向量的大小和方向。
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 技术说明卡片 -->
+		<div class="bg-white rounded-xl p-6 shadow-card mt-8 relative z-10 card-hover-effect">
+			<h3 class="text-lg font-semibold mb-4 flex items-center">
+				<i class="fa fa-cogs text-primary mr-2"></i>
+				技术细节
+			</h3>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				<div class="p-4 bg-neutral rounded-lg">
+					<h4 class="font-medium text-primary mb-2">向量生成</h4>
+					<p class="text-gray-600 text-sm">
+						使用最先进的句子转换器将文本转换为捕获语义和上下文的高维向量。
+					</p>
+				</div>
+				<div class="p-4 bg-neutral rounded-lg">
+					<h4 class="font-medium text-primary mb-2">向量可视化</h4>
+					<p class="text-gray-600 text-sm">
+						每个数据点都显示有从坐标原点(0,0,0)出发的向量，展示每个点在3D空间中的位置和方向关系。
+					</p>
+				</div>
+				<div class="p-4 bg-neutral rounded-lg">
+					<h4 class="font-medium text-primary mb-2">余弦相似度</h4>
+					<p class="text-gray-600 text-sm">
+						测量高维空间中两个向量之间夹角的余弦值，提供文本间语义相似度的度量。
+					</p>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<footer class="bg-white border-t border-border mt-12 py-8 relative z-10">
+		<div class="container mx-auto px-4">
+			<div class="flex flex-col md:flex-row justify-between items-center">
+				<div class="mb-4 md:mb-0">
+					<p class="text-gray-500 text-sm">© 2023 SAT向量分析工具（带原点向量）。保留所有权利。</p>
+				</div>
+				<div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+					<a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200">
+						<i class="fa fa-question-circle"></i>
+						<span class="ml-1">帮助</span>
+					</a>
+					<a href="https://www.sbert.net/" target="_blank" class="text-gray-400 hover:text-primary transition-colors duration-200">
+						<i class="fa fa-external-link"></i>
+						<span class="ml-1">sentence-transformers</span>
+					</a>
+					<a href="https://scipy.org/" target="_blank" class="text-gray-400 hover:text-primary transition-colors duration-200">
+						<i class="fa fa-calculator"></i>
+						<span class="ml-1">SciPy（计算）</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<script>
+		// 全局变量
+		let model = null;
+		let currentModel = null;
+		let transformersLoaded = false;
+		const MAX_ITEMS = 1000;
+		
+		// 页面加载时初始化
+		window.addEventListener('load', function() {
+			// 初始化模型选择器事件
+			const modelSelector = document.getElementById('model-selector');
+			updateModelInfo(modelSelector.value);
+			
+			modelSelector.addEventListener('change', function() {
+				const selectedValue = this.value;
+				updateModelInfo(selectedValue);
+				
+				// 如果已加载不同模型，清除当前模型
+				if (model && currentModel !== selectedValue) {
+					model = null;
+				}
+			});
+			
+			// 检查并配置Transformers库
+			const checkTransformers = setInterval(function() {
+				if (window.transformers) {
+					transformersLoaded = true;
+					
+					// 配置transformers库以支持本地文件运行
+					// 这允许在file://协议下正常工作
+					try {
+						// 设置环境变量以允许本地和远程模型加载
+						if (window.transformers.env) {
+							window.transformers.env.allowLocalModels = true;
+							window.transformers.env.allowRemoteModels = true;
+							console.log('Transformers配置成功：本地模式已启用');
+						}
+					} catch (e) {
+						console.warn('Transformers配置失败:', e);
+					}
+					
+					clearInterval(checkTransformers);
+				}
+			}, 500);
+		});
+		
+		// 更新模型信息显示
+		function updateModelInfo(modelValue) {
+			const modelSelector = document.getElementById('model-selector');
+			const selectedOption = modelSelector.options[modelSelector.selectedIndex];
+			const modelName = modelValue.replace('Xenova/', '');
+			const modelSize = selectedOption?.getAttribute('data-size') || '';
+			const modelDim = selectedOption?.getAttribute('data-dim') || '';
+			
+			// 更新模型信息文本
+			document.getElementById('model-info').textContent = 
+				`Selected: ${modelName} (${modelSize}, ${modelDim} dimensions)`;
+			
+			// 显示大模型警告
+			const warningElement = document.getElementById('model-warning');
+			if (modelSize === '420MB') {
+				warningElement.classList.remove('hidden');
+			} else {
+				warningElement.classList.add('hidden');
+			}
+			
+			// 更新模型加载信息
+			document.getElementById('current-model-name').textContent = modelName;
+			document.getElementById('model-size-info').textContent = 
+				`Approximately ${modelSize}, only needs to download once`;
+				
+			// 更新结果显示中的模型名称
+			document.getElementById('used-model-display').textContent = `sentence-transformers: ${modelName}`;
+		}
+		
+		// 添加句子功能
+		document.getElementById('add-sentence').addEventListener('click', function() {
+			const totalItems = document.querySelectorAll('[data-sentence], [data-stem], [data-option]').length;
+			if (totalItems >= MAX_ITEMS) {
+				alert(`为防止性能问题，不建议添加过多项目（${MAX_ITEMS}）`);
+				return;
+			}
+			
+			const container = document.getElementById('sentences-container');
+			const itemCount = container.querySelectorAll('.sentence-item').length + 1;
+			
+			const newItem = document.createElement('div');
+			newItem.className = 'sentence-item group';
+			newItem.innerHTML = `
+				<div class="flex items-start">
+					<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">${itemCount}</div>
+					<div class="flex-grow relative">
+						<textarea 
+							class="large-input-field"
+							placeholder="Enter sentence here..."
+							data-sentence
+						></textarea>
+					</div>
+					<button class="remove-btn flex-shrink-0 w-6 h-6 text-gray-400 hover:text-red-500 transition-colors duration-200 opacity-0 group-hover:opacity-100 ml-2" data-remove>
+						<i class="fa fa-times"></i>
+					</button>
+				</div>
+			`;
+			
+			// 添加淡入动画
+			newItem.style.opacity = '0';
+			newItem.style.transform = 'translateY(10px)';
+			container.appendChild(newItem);
+			
+			// 触发重排后执行动画
+			setTimeout(() => {
+				newItem.style.opacity = '1';
+				newItem.style.transform = 'translateY(0)';
+			}, 10);
+			
+			updateNumbering('sentences-container', '.sentence-item');
+		});
+
+		// 添加题干功能
+		document.getElementById('add-stem').addEventListener('click', function() {
+			const totalItems = document.querySelectorAll('[data-sentence], [data-stem], [data-option]').length;
+			if (totalItems >= MAX_ITEMS) {
+				alert(`为防止性能问题，不建议添加过多项目（${MAX_ITEMS}）`);
+				return;
+			}
+			
+			const container = document.getElementById('stems-container');
+			const itemCount = container.querySelectorAll('.stem-item').length + 1;
+			
+			const newItem = document.createElement('div');
+			newItem.className = 'stem-item group';
+			newItem.innerHTML = `
+				<div class="flex items-start">
+					<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">${itemCount}</div>
+					<div class="flex-grow relative">
+						<textarea 
+							class="medium-input-field p-4"
+							placeholder="Enter question stem here..."
+							data-stem
+						></textarea>
+					</div>
+					<button class="remove-btn flex-shrink-0 w-6 h-6 text-gray-400 hover:text-red-500 transition-colors duration-200 opacity-0 group-hover:opacity-100 ml-2" data-remove>
+						<i class="fa fa-times"></i>
+					</button>
+				</div>
+			`;
+			
+			// 添加淡入动画
+			newItem.style.opacity = '0';
+			newItem.style.transform = 'translateY(10px)';
+			container.appendChild(newItem);
+			
+			// 触发重排后执行动画
+			setTimeout(() => {
+				newItem.style.opacity = '1';
+				newItem.style.transform = 'translateY(0)';
+			}, 10);
+			
+			updateNumbering('stems-container', '.stem-item');
+		});
+
+		// 删除项目功能
+		document.addEventListener('click', function(e) {
+			if (e.target.closest('[data-remove]')) {
+				const btn = e.target.closest('[data-remove]');
+				const item = btn.closest('.sentence-item, .stem-item');
+				
+				// 添加淡出动画
+				item.style.opacity = '0';
+				item.style.transform = 'translateY(10px)';
+				
+				// 动画结束后移除元素
+				setTimeout(() => {
+					item.remove();
+					
+					if (item.classList.contains('sentence-item')) {
+						updateNumbering('sentences-container', '.sentence-item');
+					} else if (item.classList.contains('stem-item')) {
+						updateNumbering('stems-container', '.stem-item');
+					}
+				}, 300);
+			}
+		});
+
+		// 更新数字序号
+		function updateNumbering(containerId, itemSelector) {
+			const container = document.getElementById(containerId);
+			const items = container.querySelectorAll(itemSelector);
+			
+			items.forEach((item, index) => {
+				const numberElement = item.querySelector('.rounded-full');
+				if (numberElement) {
+					// 添加数字变化动画
+					numberElement.style.transition = 'all 0.3s ease';
+					numberElement.style.transform = 'scale(0.8)';
+					
+					setTimeout(() => {
+						numberElement.textContent = index + 1;
+						numberElement.style.transform = 'scale(1)';
+					}, 150);
+				}
+			});
+		}
+
+		// 生成高维度句子嵌入向量
+		async function generateEmbeddings(sentences, modelName) {
+			if (!window.transformers) {
+				console.error('Transformers库未加载');
+				throw new Error("Transformers库加载失败。请刷新页面重试。");
+			}
+			
+			// 如果模型未加载或已更改，加载新模型
+			if (!model || currentModel !== modelName) {
+				document.getElementById('loading').classList.add('hidden');
+				document.getElementById('library-loading').classList.add('hidden');
+				document.getElementById('model-loading').classList.remove('hidden');
+				
+				try {
+					console.log(`正在加载模型: ${modelName}`);
+					console.log('Transformers库对象:', window.transformers);
+					console.log('可用方法:', Object.keys(window.transformers));
+					
+					// 使用pipeline API进行特征提取 (适用于 @xenova/transformers v2.17+)
+					console.log('使用pipeline API加载模型...');
+					model = await window.transformers.pipeline('feature-extraction', modelName);
+					
+					currentModel = modelName;
+					console.log(`模型加载成功: ${modelName}`);
+				} catch (e) {
+					console.error('模型加载失败详情:', e);
+					console.error('错误类型:', e.name);
+					console.error('错误消息:', e.message);
+					console.error('错误堆栈:', e.stack);
+					
+					// 提供更详细的错误信息
+					let errorMsg = `无法加载${modelName.replace('Xenova/', '')}模型。\n`;
+					if (e.message.includes('fetch') || e.message.includes('network') || e.message.includes('CORS')) {
+						errorMsg += '网络错误：可能是CORS限制或网络连接问题。\n';
+						errorMsg += '提示：尝试使用本地Web服务器运行此文件，而不是直接打开HTML文件。';
+					} else if (e.message.includes('abort')) {
+						errorMsg += '下载超时或被中断。大型模型(420MB)需要较长时间下载，请检查网络连接并重试。';
+					} else {
+						errorMsg += `详细错误: ${e.message}`;
+					}
+					
+					throw new Error(errorMsg);
+				}
+			}
+			
+			return await generateEmbeddingsInBatches(sentences, model);
+		}
+
+		// 辅助函数：生成嵌入向量
+		async function generateEmbeddingsInBatches(sentences, modelInstance, batchSize = 5) {
+			const embeddings = [];
+			
+			console.log(`开始生成 ${sentences.length} 个句子的嵌入向量`);
+			
+			for (let i = 0; i < sentences.length; i += batchSize) {
+				const batch = sentences.slice(i, i + batchSize);
+				console.log(`处理批次 ${Math.floor(i/batchSize) + 1}/${Math.ceil(sentences.length/batchSize)}, 包含 ${batch.length} 个句子`);
+				
+				// 调用pipeline进行特征提取
+				const outputs = await modelInstance(batch, { pooling: 'mean', normalize: true });
+				
+				console.log('Pipeline输出类型:', typeof outputs);
+				console.log('Pipeline输出:', outputs);
+				console.log('是否为数组:', Array.isArray(outputs));
+				
+				// 处理输出 - v2.17+ API返回Tensor对象
+				// 对于每个输入文本，输出一个张量
+				for (let j = 0; j < batch.length; j++) {
+					let embedding;
+					
+					if (outputs[j]) {
+						const output = outputs[j];
+						console.log(`句子 ${i+j} 的输出:`, output);
+						
+						// 尝试不同的方法提取数据
+						if (output.data) {
+							// Tensor.data 是 Float32Array
+							embedding = Array.from(output.data);
+							console.log(`从 .data 提取了 ${embedding.length} 维向量`);
+						} else if (output.tolist) {
+							embedding = output.tolist();
+							console.log(`从 .tolist() 提取了 ${embedding.length} 维向量`);
+						} else if (Array.isArray(output)) {
+							embedding = output;
+							console.log(`直接使用数组，${embedding.length} 维向量`);
+						} else if (typeof output.size === 'number') {
+							// 可能是TypedArray
+							embedding = Array.from(output);
+							console.log(`从 TypedArray 提取了 ${embedding.length} 维向量`);
+						} else {
+							console.error(`无法识别的输出格式:`, output);
+							throw new Error(`无法处理句子 ${i+j} 的输出格式`);
+						}
+						
+						if (embedding && embedding.length > 0) {
+							embeddings.push(embedding);
+						} else {
+							throw new Error(`句子 ${i+j} 生成的嵌入向量为空`);
+						}
+					} else {
+						console.error(`批次中句子 ${j} 没有输出`);
+						throw new Error(`句子 ${i+j} 没有生成嵌入向量`);
+					}
+				}
+			}
+			
+			console.log(`✓ 成功生成了 ${embeddings.length} 个嵌入向量`);
+			console.log(`每个向量的维度: ${embeddings[0]?.length || 0}`);
+			
+			return embeddings;
+		}
+
+		// 高维度备用文本向量生成（用于模型加载失败时）
+		function highDimTextToVector(text) {
+			const DIMENSIONS = 256;
+			let vector = new Array(DIMENSIONS).fill(0);
+			
+			for (let i = 0; i < Math.min(text.length, 500); i++) {
+				let charCode = text.charCodeAt(i);
+				for (let j = 0; j < 4; j++) {
+					let index = (charCode * (j + 1) + i) % DIMENSIONS;
+					vector[index] = (vector[index] + charCode * Math.sin(i + j)) % 1000;
+				}
+			}
+			
+			// 归一化
+			const norm = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0) || 1);
+			return vector.map(v => v / norm);
+		}
+
+		// 创建交互式3D可视化并计算多种距离
+		async function createVisualizationWithMultiDistance(embeddings3d, labels, categories, optionIndices, allTexts, modelName, pyodide, originalEmbeddings, combinedParagraphVector) {
+			// 分离不同类型的点
+			const sentenceQuestionIndices = categories
+				.map((cat, idx) => cat < 2 ? idx : null)
+				.filter(idx => idx !== null);
+			
+			// 提取句子和题干的点用于计算几何形状
+			const sentenceQuestionPoints = sentenceQuestionIndices.map(idx => embeddings3d[idx]);
+			const numPoints = sentenceQuestionPoints.length;
+			
+			// 确定几何形状类型
+			let geometryType;
+			if (numPoints >= 4) {
+				geometryType = 'convex_hull';
+			} else if (numPoints === 3) {
+				geometryType = 'triangle';
+			} else if (numPoints === 2) {
+				geometryType = 'line_segment';
+			} else if (numPoints === 1) {
+				geometryType = 'single_point';
+			} else {
+				throw new Error("需要至少1个句子或题干来计算距离");
+			}
+			
+			// 更新UI中的几何形状相关文本
+			updateGeometryUI(geometryType);
+			
+			// 将数据传递给Python计算距离和几何形状
+			pyodide.globals.set('points', sentenceQuestionPoints);
+			pyodide.globals.set('option_points', optionIndices.map(idx => embeddings3d[idx]));
+			pyodide.globals.set('geometry_type', geometryType);
+			
+			// Python代码：根据点数量计算相应几何形状和到形状的距离
+			const geometryCode = `
+import numpy as np
+from scipy.spatial import ConvexHull
+from scipy.spatial.distance import cdist
+
+# 转换为numpy数组
+points_np = np.array(points, dtype=np.float64)
+option_points_np = np.array(option_points, dtype=np.float64)
+num_points = points_np.shape[0]
+
+# 初始化变量
+shape_data = []
+distances = []
+
+# 根据点数量计算相应的几何形状和距离
+if geometry_type == 'convex_hull':
+	# 计算3D凸包
+	hull = ConvexHull(points_np)
+	faces = hull.simplices
+	
+	# 准备凸包面数据用于可视化
+	for simplex in faces:
+		shape_data.append([points_np[i].tolist() for i in simplex])
+	
+	# 计算每个选项点到凸包的最小距离
+	for point in option_points_np:
+		min_dist = float('inf')
+		# 检查点是否在凸包内部
+		if np.all(hull.equations[:, :-1] @ point + hull.equations[:, -1] <= 1e-10):
+			min_dist = 0.0
+		else:
+			# 计算到每个面的距离并取最小值
+			for simplex in faces:
+				# 获取三角形的三个点
+				p1, p2, p3 = points_np[simplex]
+				
+				# 计算三角形的法向量
+				v1 = p2 - p1
+				v2 = p3 - p1
+				normal = np.cross(v1, v2)
+				normal = normal / np.linalg.norm(normal) if np.linalg.norm(normal) > 0 else normal
+				
+				# 计算点到平面的距离
+				dist = np.abs(np.dot(normal, point - p1))
+				
+				if dist < min_dist:
+					min_dist = dist
+		
+		distances.append(float(min_dist))
+
+elif geometry_type == 'triangle':
+	# 三角形由所有3个点组成
+	triangle = points_np
+	shape_data.append(triangle.tolist())
+	
+	# 计算点到三角形的距离
+	def point_to_triangle_dist(point, triangle):
+		p0, p1, p2 = triangle
+		
+		# 向量
+		v0 = p2 - p0
+		v1 = p1 - p0
+		v2 = point - p0
+		
+		# 点积
+		dot00 = np.dot(v0, v0)
+		dot01 = np.dot(v0, v1)
+		dot02 = np.dot(v0, v2)
+		dot11 = np.dot(v1, v1)
+		dot12 = np.dot(v1, v2)
+		
+		# 计算参数
+		inv_denom = 1.0 / (dot00 * dot11 - dot01 * dot01)
+		u = (dot11 * dot02 - dot01 * dot12) * inv_denom
+		v = (dot00 * dot12 - dot01 * dot02) * inv_denom
+		
+		# 检查是否在三角形内
+		if (u >= 0) and (v >= 0) and (u + v <= 1):
+			# 点在三角形内，距离为0
+			return 0.0
+		
+		# 计算到三角形边的距离
+		d1 = np.linalg.norm(point - p0)
+		d2 = np.linalg.norm(point - p1)
+		d3 = np.linalg.norm(point - p2)
+		
+		# 计算到线段的距离
+		def point_to_segment_dist(p, a, b):
+			if np.all(a == b):
+				return np.linalg.norm(p - a)
+			# 向量
+			v = b - a
+			w = p - a
+			# 点积
+			c1 = np.dot(w, v)
+			if c1 <= 0:
+				return np.linalg.norm(w)
+			c2 = np.dot(v, v)
+			if c2 <= c1:
+				return np.linalg.norm(p - b)
+			# 投影
+			b = c1 / c2
+			pb = a + b * v
+			return np.linalg.norm(p - pb)
+			
+		d4 = point_to_segment_dist(point, p0, p1)
+		d5 = point_to_segment_dist(point, p1, p2)
+		d6 = point_to_segment_dist(point, p2, p0)
+		
+		return min(d1, d2, d3, d4, d5, d6)
+	
+	# 计算每个选项到三角形的距离
+	for point in option_points_np:
+		distances.append(float(point_to_triangle_dist(point, triangle)))
+
+elif geometry_type == 'line_segment':
+	# 线段由两个点组成
+	p0, p1 = points_np[0], points_np[1]
+	shape_data.append([p0.tolist(), p1.tolist()])
+	
+	# 计算点到线段的距离
+	def point_to_segment_dist(p, a, b):
+		if np.all(a == b):
+			return np.linalg.norm(p - a)
+		# 向量
+		v = b - a
+		w = p - a
+		# 点积
+		c1 = np.dot(w, v)
+		if c1 <= 0:
+			return np.linalg.norm(w)
+		c2 = np.dot(v, v)
+		if c2 <= c1:
+			return np.linalg.norm(p - b)
+		# 投影
+		b = c1 / c2
+		pb = a + b * v
+		return np.linalg.norm(p - pb)
+	
+	# 计算每个选项到线段的距离
+	for point in option_points_np:
+		distances.append(float(point_to_segment_dist(point, p0, p1)))
+
+elif geometry_type == 'single_point':
+	# 单个点
+	point = points_np[0]
+	shape_data.append([point.tolist()])
+	
+	# 计算每个选项到该点的距离
+	for opt_point in option_points_np:
+		distances.append(float(np.linalg.norm(opt_point - point)))
+
+# 返回形状数据和距离
+(shape_data, distances)
+			`;
+			
+			// 执行Python代码计算几何形状和距离
+			const [shapeData, geometryDistances] = await pyodide.runPythonAsync(geometryCode);
+			
+			// 2. 计算高维空间中选项到题目逻辑空间的距离（最小距离到任何句子或题干向量）
+			const highDimLogicDistances = await calculateHighDimLogicDistances(
+				originalEmbeddings, 
+				sentenceQuestionIndices, 
+				optionIndices, 
+				pyodide
+			);
+			
+			// 3. 计算高维空间中选项到合并句子大段落向量的余弦相似度
+			const cosineSimilarities = await calculateCombinedParagraphSimilarities(
+				originalEmbeddings, 
+				optionIndices, 
+				combinedParagraphVector,
+				pyodide
+			);
+			
+			// 定义样式
+			const colors = ['#165DFF', '#36CFC9', '#722ED1']; // 蓝色、青绿色、紫色
+			const shapeColor = 'rgba(255, 215, 0, 0.2)'; // 半透明黄色
+			const shapeEdgeColor = 'rgba(255, 180, 0, 0.8)'; // 黄色边缘
+			const vectorColor = 'rgba(255, 77, 79, 0.6)'; // 红色向量
+			const vectorWidth = 2;
+			const labelsText = ['Sentences', 'Question Stems', 'Options'];
+			
+			// 准备轨迹数据
+			const traces = [];
+			
+			// 添加几何形状
+			if (geometryType === 'convex_hull') {
+				// 处理凸包的多个面
+				shapeData.forEach((face, i) => {
+					// 每个面是一个三角形，需要定义4个点使Plotly能正确绘制（首尾相连）
+					const x = [face[0][0], face[1][0], face[2][0], face[0][0]];
+					const y = [face[0][1], face[1][1], face[2][1], face[0][1]];
+					const z = [face[0][2], face[1][2], face[2][2], face[0][2]];
+					
+					traces.push({
+						x: x,
+						y: y,
+						z: z,
+						type: 'scatter3d',
+						mode: 'lines',
+						line: {
+							color: shapeEdgeColor,
+							width: 2
+						},
+						surfaceaxis: 0,
+						surfacecolor: shapeColor,
+						showlegend: i === 0, // 只为第一个面显示图例
+						name: 'Convex Hull'
+					});
+					
+					// 添加填充面
+					traces.push({
+						x: [face[0][0], face[1][0], face[2][0]],
+						y: [face[0][1], face[1][1], face[2][1]],
+						z: [face[0][2], face[1][2], face[2][2]],
+						type: 'mesh3d',
+						color: shapeColor,
+						opacity: 0.3,
+						showlegend: false
+					});
+				});
+			} else if (geometryType === 'triangle') {
+				// 处理三角形
+				const triangle = shapeData[0];
+				// 线段（首尾相连）
+				const x = [triangle[0][0], triangle[1][0], triangle[2][0], triangle[0][0]];
+				const y = [triangle[0][1], triangle[1][1], triangle[2][1], triangle[0][1]];
+				const z = [triangle[0][2], triangle[1][2], triangle[2][2], triangle[0][2]];
+				
+				traces.push({
+					x: x,
+					y: y,
+					z: z,
+					type: 'scatter3d',
+					mode: 'lines',
+					line: {
+						color: shapeEdgeColor,
+						width: 3
+					},
+					name: 'Triangle'
+				});
+				
+				// 填充面
+				traces.push({
+					x: [triangle[0][0], triangle[1][0], triangle[2][0]],
+					y: [triangle[0][1], triangle[1][1], triangle[2][1]],
+					z: [triangle[0][2], triangle[1][2], triangle[2][2]],
+					type: 'mesh3d',
+					color: shapeColor,
+					opacity: 0.3,
+					showlegend: false
+				});
+			} else if (geometryType === 'line_segment') {
+				// 处理线段
+				const segment = shapeData[0];
+				const x = [segment[0][0], segment[1][0]];
+				const y = [segment[0][1], segment[1][1]];
+				const z = [segment[0][2], segment[1][2]];
+				
+				traces.push({
+					x: x,
+					y: y,
+					z: z,
+					type: 'scatter3d',
+					mode: 'lines',
+					line: {
+						color: shapeEdgeColor,
+						width: 4,
+						dash: 'solid'
+					},
+					name: 'Line Segment'
+				});
+			} else if (geometryType === 'single_point') {
+				// 处理单个点
+				const point = shapeData[0][0];
+				traces.push({
+					x: [point[0]],
+					y: [point[1]],
+					z: [point[2]],
+					type: 'scatter3d',
+					mode: 'markers',
+					marker: {
+						size: 12,
+						color: shapeEdgeColor,
+						opacity: 0.8,
+						symbol: 'diamond'
+					},
+					name: 'Reference Point'
+				});
+			}
+			
+			// 添加从原点(0,0,0)到每个点的向量
+			embeddings3d.forEach((point, idx) => {
+				// 为每个点创建从原点出发的向量
+				traces.push({
+					x: [0, point[0]],
+					y: [0, point[1]],
+					z: [0, point[2]],
+					type: 'scatter3d',
+					mode: 'lines',
+					line: {
+						color: vectorColor,
+						width: vectorWidth,
+						dash: 'solid'
+					},
+					showlegend: idx === 0, // 只为第一个向量显示图例
+					name: 'Vector from Origin',
+					hoverinfo: 'none' // 向量不显示悬停信息
+				});
+			});
+			
+			// 为每个类别创建一个轨迹（放在几何形状和向量后面）
+			for (let i = 0; i < 3; i++) {
+				const indices = categories.map((cat, idx) => cat === i ? idx : null).filter(idx => idx !== null);
+				
+				if (indices.length > 0) {
+					const x = indices.map(idx => embeddings3d[idx][0]);
+					const y = indices.map(idx => embeddings3d[idx][1]);
+					const z = indices.map(idx => embeddings3d[idx][2]);
+					const text = indices.map(idx => labels[idx]);
+					
+					traces.push({
+						x: x,
+						y: y,
+						z: z,
+						mode: 'markers+text',
+						type: 'scatter3d',
+						name: labelsText[i],
+						marker: {
+							size: i < 2 ? 8 : 6,
+							color: colors[i],
+							opacity: 0.8,
+							line: {
+								color: 'black',
+								width: 1
+							}
+						},
+						text: text,
+						textposition: 'top center',
+						hoverinfo: 'text'
+					});
+				}
+			}
+			
+			// 布局设置
+			const layout = {
+				title: {
+					text: `3D Vectors from Origin (0,0,0) with ${getGeometryDisplayName(geometryType)} (${modelName.replace('Xenova/', '')})`,
+					font: {
+						size: 16,
+						weight: 'bold'
+					},
+					pad: {
+						t: 20
+					}
+				},
+				scene: {
+					xaxis: {
+						title: {
+							text: 'X Axis (Principal Component 1)',
+							font: {
+								size: 14,
+								weight: 'bold'
+							}
+						},
+						tickfont: {
+							size: 11
+						}
+					},
+					yaxis: {
+						title: {
+							text: 'Y Axis (Principal Component 2)',
+							font: {
+								size: 14,
+								weight: 'bold'
+							}
+						},
+						tickfont: {
+							size: 11
+						}
+					},
+					zaxis: {
+						title: {
+							text: 'Z Axis (Principal Component 3)',
+							font: {
+								size: 14,
+								weight: 'bold'
+							}
+						},
+						tickfont: {
+							size: 11
+						}
+					},
+					camera: {
+						eye: {
+							x: 1.2,
+							y: 1.2,
+							z: 0.8
+						}
+					},
+					aspectmode: 'cube'
+				},
+				legend: {
+					font: {
+						size: 12
+					},
+					x: 0.85,
+					y: 0.95
+				},
+				margin: {
+					l: 10,
+					r: 10,
+					b: 10,
+					t: 50,
+					pad: 4
+				},
+				hovermode: 'closest'
+			};
+			
+			// 配置项
+			const config = {
+				responsive: true,
+				displayModeBar: true,
+				modeBarButtonsToAdd: [
+					{
+						name: 'resetCamera',
+						icon: Plotly.Icons.camera,
+						click: function(gd) {
+							Plotly.relayout(gd, 'scene.camera', layout.scene.camera);
+						}
+					}
+				],
+				toImageButtonOptions: {
+					format: 'png',
+					filename: `sat-vector-visualization-${modelName.replace('Xenova/', '')}`,
+					height: 600,
+					width: 800,
+					scale: 2
+				}
+			};
+			
+			// 绘制图表
+			const container = document.getElementById('plotly-container');
+			Plotly.newPlot(container, traces, layout, config);
+			
+			// 显示三种距离计算的预测结果
+			displayMultiPredictionResults(
+				geometryDistances, 
+				highDimLogicDistances, 
+				cosineSimilarities, 
+				optionIndices, 
+				allTexts,
+				geometryType
+			);
+			
+			return {
+				geometryDistances,
+				highDimLogicDistances,
+				cosineSimilarities
+			};
+		}
+		
+		// 获取几何形状的显示名称
+		function getGeometryDisplayName(geometryType) {
+			switch(geometryType) {
+				case 'convex_hull': return 'Convex Hull';
+				case 'triangle': return 'Triangle';
+				case 'line_segment': return 'Line Segment';
+				case 'single_point': return 'Reference Point';
+				default: return 'Geometric Shape';
+			}
+		}
+		
+		// 更新UI中与几何形状相关的文本
+		function updateGeometryUI(geometryType) {
+			const displayName = getGeometryDisplayName(geometryType);
+			
+			// 更新标题和标签
+			document.getElementById('geometry-type').textContent = `3D空间距离`;
+			document.getElementById('geometry-reference').textContent = `题目逻辑空间`;
+			document.getElementById('geometry-label').textContent = `题目逻辑空间`;
+			
+			// 更新图例
+			document.getElementById('shape-legend').textContent = 
+				`Blue: Sentences | Green: Question Stems | Purple: Options | Red: Origin Vectors | Yellow: ${displayName}`;
+			
+			// 更新解释文本
+			let explanation = '三维空间中每个选项到由所有句子和题干向量形成的几何形状的最小距离。';
+			
+			document.getElementById('geometry-explanation-title').textContent = `3D空间距离：`;
+			document.getElementById('geometry-explanation').textContent = explanation;
+		}
+		
+		// 计算高维空间中选项到题目逻辑空间的距离
+		async function calculateHighDimLogicDistances(embeddings, contextIndices, optionIndices, pyodide) {
+			// 提取上下文向量和选项向量
+			const contextVectors = contextIndices.map(idx => embeddings[idx]);
+			const optionVectors = optionIndices.map(idx => embeddings[idx]);
+			
+			// 将数据传递给Python
+			pyodide.globals.set('context_vectors', contextVectors);
+			pyodide.globals.set('option_vectors', optionVectors);
+			
+			// Python代码：计算每个选项到最近上下文向量的距离
+			const distanceCode = `
+import numpy as np
+from scipy.spatial.distance import cdist
+
+# 转换为numpy数组
+context_np = np.array(context_vectors, dtype=np.float64)
+options_np = np.array(option_vectors, dtype=np.float64)
+
+# 计算每个选项到所有上下文向量的欧氏距离
+distances = cdist(options_np, context_np, 'euclidean')
+
+# 取最小距离（到最近的上下文向量）
+min_distances = distances.min(axis=1).tolist()
+
+min_distances
+			`;
+			
+			// 执行Python代码计算距离
+			return await pyodide.runPythonAsync(distanceCode);
+		}
+		
+		// 计算高维空间中选项到合并句子大段落向量的余弦相似度
+		async function calculateCombinedParagraphSimilarities(embeddings, optionIndices, combinedParagraphVector, pyodide) {
+			// 提取选项向量
+			const optionVectors = optionIndices.map(idx => embeddings[idx]);
+			
+			// 将数据传递给Python
+			pyodide.globals.set('option_vectors', optionVectors);
+			pyodide.globals.set('combined_vector', combinedParagraphVector);
+			
+			// Python代码：计算余弦相似度
+			const similarityCode = `
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
+# 转换为numpy数组
+options_np = np.array(option_vectors, dtype=np.float64)
+combined_np = np.array(combined_vector, dtype=np.float64).reshape(1, -1)
+
+# 计算余弦相似度（值越大表示越相似，范围[-1, 1]）
+similarities = cosine_similarity(options_np, combined_np).flatten().tolist()
+
+similarities
+			`;
+			
+			// 执行Python代码计算余弦相似度
+			return await pyodide.runPythonAsync(similarityCode);
+		}
+		
+		// 显示三种距离/相似度计算的预测结果
+		function displayMultiPredictionResults(geometryDistances, logicDistances, cosineSimilarities, optionIndices, allTexts, geometryType) {
+			// 选项标签 (A, B, C, D)
+			const optionLabels = ['A', 'B', 'C', 'D'];
+			const geometryDisplayName = getGeometryDisplayName(geometryType);
+			
+			// 1. 显示3D空间距离结果
+			displayPredictionResult(
+				geometryDistances, 
+				optionIndices, 
+				allTexts, 
+				optionLabels,
+				'best-option-geometry',
+				'option-distances-geometry',
+				'correct',
+				'text-success',
+				'bg-success/10',
+				'border-success',
+				'3D空间中的题目逻辑空间',
+				'distance' // 距离：值越小越好
+			);
+			
+			// 2. 显示高维逻辑空间距离结果
+			displayPredictionResult(
+				logicDistances, 
+				optionIndices, 
+				allTexts, 
+				optionLabels,
+				'best-option-logic',
+				'option-distances-logic',
+				'correct-secondary',
+				'text-info',
+				'bg-info/10',
+				'border-info',
+				'高维空间中的题目逻辑空间',
+				'distance' // 距离：值越小越好
+			);
+			
+			// 3. 显示合并句子向量余弦相似度结果
+			displayPredictionResult(
+				cosineSimilarities, 
+				optionIndices, 
+				allTexts, 
+				optionLabels,
+				'best-option-combined',
+				'option-distances-combined',
+				'correct-tertiary',
+				'text-warning',
+				'bg-warning/10',
+				'border-warning',
+				'合并句子大段落',
+				'similarity' // 相似度：值越大越好
+			);
+		}
+		
+		// 显示单个预测结果的辅助函数（增加了对相似度的支持）
+		function displayPredictionResult(values, optionIndices, allTexts, optionLabels, 
+										bestOptionId, distancesContainerId, correctClass, 
+										textColorClass, bgColorClass, borderColorClass, referenceName,
+										type = 'distance') {
+			// 找到最佳选项索引
+			let bestValue = type === 'distance' ? Infinity : -Infinity;
+			let bestOptionIndex = 0;
+			
+			values.forEach((value, index) => {
+				if ((type === 'distance' && value < bestValue) || 
+					(type === 'similarity' && value > bestValue)) {
+					bestValue = value;
+					bestOptionIndex = index;
+				}
+			});
+			
+			// 显示最佳选项
+			const bestOptionText = allTexts[optionIndices[bestOptionIndex]];
+			const valueLabel = type === 'distance' ? '距离' : '相似度';
+			document.getElementById(bestOptionId).innerHTML = `
+				<div class="flex items-center mb-2">
+					<span class="w-6 h-6 rounded-full ${textColorClass} bg-white flex items-center justify-center mr-2 font-bold border border-${textColorClass}">${optionLabels[bestOptionIndex]}</span>
+					<span class="font-semibold ${textColorClass}">选项 ${optionLabels[bestOptionIndex]}</span>
+				</div>
+				<div class="ml-8 text-gray-800">${bestOptionText}</div>
+				<div class="mt-2 text-sm ${textColorClass} font-medium ml-8">
+					${valueLabel}: ${bestValue.toFixed(6)}
+				</div>
+			`;
+			
+			// 显示所有选项的数值
+			const distancesContainer = document.getElementById(distancesContainerId);
+			distancesContainer.innerHTML = '';
+			
+			values.forEach((value, index) => {
+				const isBest = index === bestOptionIndex;
+				const optionText = allTexts[optionIndices[index]];
+				const valueLabel = type === 'distance' ? '距离' : '相似度';
+				
+				const distanceElement = document.createElement('div');
+				distanceElement.className = `option-distance ${isBest ? correctClass : 'border border-border'}`;
+				distanceElement.innerHTML = `
+					<div class="flex justify-between items-start">
+						<div class="flex items-center">
+							<span class="w-6 h-6 rounded-full ${isBest ? bgColorClass : 'bg-primary-light'} ${isBest ? textColorClass : 'text-primary'} flex items-center justify-center mr-2 font-bold ${isBest ? borderColorClass : ''}">${optionLabels[index]}</span>
+							<span class="font-medium ${isBest ? textColorClass : ''}">选项 ${optionLabels[index]}</span>
+						</div>
+						<span class="text-sm ${isBest ? textColorClass + ' font-bold' : 'text-gray-600'}">
+							${valueLabel}: ${value.toFixed(6)}
+							${isBest ? '<i class="fa fa-check-circle ml-1"></i>' : ''}
+						</span>
+					</div>
+					<div class="mt-1 ml-8 text-sm text-gray-700 line-clamp-2">
+						${optionText}
+					</div>
+				`;
+				
+				distancesContainer.appendChild(distanceElement);
+			});
+		}
+
+		// 测试库加载按钮
+		document.getElementById('test-library').addEventListener('click', function() {
+			console.log('=== 测试 Transformers 库 ===');
+			
+			if (!window.transformers) {
+				alert('❌ Transformers库未加载！\n请刷新页面或检查网络连接。');
+				console.error('window.transformers 不存在');
+				return;
+			}
+			
+			console.log('✓ Transformers库已加载');
+			console.log('库对象:', window.transformers);
+			console.log('可用方法/属性:', Object.keys(window.transformers));
+			
+			// 检查常用方法
+			const methods = ['pipeline', 'AutoModel', 'AutoTokenizer', 'env'];
+			methods.forEach(method => {
+				if (window.transformers[method]) {
+					console.log(`✓ ${method} 可用`);
+				} else {
+					console.log(`✗ ${method} 不可用`);
+				}
+			});
+			
+			// 检查当前URL协议
+			const protocol = window.location.protocol;
+			console.log('当前协议:', protocol);
+			
+			if (protocol === 'file:') {
+				alert('⚠️ 警告：您正在使用 file:// 协议！\n\n这会导致CORS错误。\n请使用本地web服务器运行:\n\npython3 -m http.server 8000\n\n然后访问: http://localhost:8000/index.html');
+			} else {
+				alert('✓ Transformers库已正确加载！\n\n检查浏览器控制台(F12)查看详细信息。');
+			}
+		});
+
+		// 生成可视化和多距离分析
+		document.getElementById('generate-visualization').addEventListener('click', async function() {
+			// 获取选中的模型
+			const modelSelector = document.getElementById('model-selector');
+			const selectedModel = modelSelector.value;
+			
+			// 显示加载状态
+			document.getElementById('initial-message').classList.add('hidden');
+			document.getElementById('result').classList.add('hidden');
+			document.getElementById('error').classList.add('hidden');
+			document.getElementById('model-loading').classList.add('hidden');
+			document.getElementById('library-loading').classList.remove('hidden');
+			
+			try {
+				// 收集输入内容
+				const sentenceElements = document.querySelectorAll('[data-sentence]');
+				const sentenceArea = Array.from(sentenceElements)
+					.map(el => el.value.trim())
+					.filter(Boolean);
+				
+				const stemElements = document.querySelectorAll('[data-stem]');
+				const questionArea = Array.from(stemElements)
+					.map(el => el.value.trim())
+					.filter(Boolean);
+				
+				const optionElements = document.querySelectorAll('[data-option]');
+				const optionsArea = Array.from(optionElements)
+					.map(el => el.value.trim())
+					.filter(Boolean);
+				
+				// 验证输入
+				if (sentenceArea.length === 0 && questionArea.length === 0) {
+					throw new Error("请至少输入一些句子或题干");
+				}
+				
+				if (optionsArea.length < 1) {
+					throw new Error("请至少输入一个选项进行分析");
+				}
+				
+				// 对于合并句子向量计算，至少需要一个句子
+				if (sentenceArea.length === 0) {
+					throw new Error("请至少输入一个句子用于合并句子向量计算");
+				}
+				
+				// 将所有句子合并成一个大段落
+				const combinedParagraph = sentenceArea.join(' ');
+				
+				// 合并所有句子（包括合并的大段落）
+				let allSentences = [
+					...sentenceArea,
+					...questionArea,
+					...optionsArea,
+					combinedParagraph  // 添加合并的大段落
+				];
+				
+				// 保存所有文本用于显示结果
+				const allTexts = [
+					...sentenceArea.map((text, i) => ({text, type: 'sentence', index: i})),
+					...questionArea.map((text, i) => ({text, type: 'stem', index: i})),
+					...optionsArea.map((text, i) => ({text, type: 'option', index: i})),
+					{text: combinedParagraph, type: 'combined', index: 0}
+				].map(item => item.text);
+				
+				// 生成标签和分类
+				const labels = [];
+				const categories = [];
+				
+				sentenceArea.forEach((_, i) => {
+					labels.push(`S${i+1}`);
+					categories.push(0);
+				});
+				
+				questionArea.forEach((_, i) => {
+					labels.push(`Q${i+1}`);
+					categories.push(1);
+				});
+				
+				const optionIndices = [];
+				optionsArea.forEach((_, i) => {
+					const index = sentenceArea.length + questionArea.length + i;
+					labels.push(`O${i+1}`);
+					categories.push(2);
+					optionIndices.push(index);
+				});
+				
+				// 添加合并段落的标签（不显示在可视化中）
+				labels.push('Combined');
+				categories.push(3);  // 使用新类别，不显示在可视化中
+				
+				// 对于大量项目，显示处理提示
+				if (allSentences.length > 50) {
+					alert(`正在处理 ${allSentences.length} 个项目。使用大型模型可能需要几分钟时间。`);
+				}
+				
+				// 生成高维度嵌入向量
+				let embeddings;
+				document.getElementById('library-loading').classList.add('hidden');
+				document.getElementById('loading').classList.remove('hidden');
+				
+				try {
+					// 使用选中的模型生成向量
+					embeddings = await generateEmbeddings(allSentences, selectedModel);
+				} catch (e) {
+					// 模型加载失败时使用备用方法
+					console.warn('使用备用向量生成:', e);
+					embeddings = allSentences.map(sentence => highDimTextToVector(sentence));
+					
+					// 显示警告但继续
+					alert(`备用模式：无法加载模型。使用基本向量生成。`);
+				}
+				
+				// 获取合并段落的向量（最后一个元素）
+				const combinedParagraphVector = embeddings[embeddings.length - 1];
+				
+				// 加载Pyodide进行PCA降维和各种距离计算
+				const pyodide = await loadPyodide({
+					indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
+				});
+				
+				// 安装必要的包
+				await pyodide.loadPackage(["numpy", "scipy", "scikit-learn"]);
+				
+				// 准备数据（排除合并段落的向量，它不参与降维和可视化）
+				const embeddingsArray = Array.from(embeddings).slice(0, -1);
+				
+				// 将数据传递给Python进行PCA降维
+				pyodide.globals.set('embeddings', embeddingsArray);
+				
+				// Python代码：高维降维到3D
+				const pythonCode = `
+import numpy as np
+from sklearn.decomposition import PCA
+
+# 转换为numpy数组
+embeddings_np = np.array(embeddings, dtype=np.float32)
+
+# 高维数据降维到3D
+pca = PCA(n_components=3)
+embeddings_3d = pca.fit_transform(embeddings_np)
+
+# 转换为普通Python列表返回
+embeddings_3d.tolist()
+				`;
+				
+				// 执行Python代码获取3D坐标
+				const embeddings3d = await pyodide.runPythonAsync(pythonCode);
+				
+				// 显示结果区域
+				document.getElementById('loading').classList.add('hidden');
+				document.getElementById('model-loading').classList.add('hidden');
+				document.getElementById('result').classList.remove('hidden');
+				
+				// 创建交互式3D可视化并计算多种距离
+				await createVisualizationWithMultiDistance(
+					embeddings3d, 
+					labels.slice(0, -1),  // 排除合并段落的标签
+					categories.slice(0, -1),  // 排除合并段落的类别
+					optionIndices,
+					allTexts.slice(0, -1),	// 排除合并段落的文本
+					selectedModel,
+					pyodide,
+					embeddingsArray,  // 排除合并段落的向量
+					combinedParagraphVector  // 传递合并段落的向量
+				);
+				
+			} catch (e) {
+				// 显示错误信息
+				document.getElementById('loading').classList.add('hidden');
+				document.getElementById('model-loading').classList.add('hidden');
+				document.getElementById('library-loading').classList.add('hidden');
+				
+				const errorDiv = document.getElementById('error');
+				const errorMessage = document.getElementById('error-message');
+				errorMessage.textContent = `错误: ${e.message}`;
+				errorDiv.classList.remove('hidden');
+				
+				console.error(e);
+			}
+		});
+	</script>
+</body>
+</html>
