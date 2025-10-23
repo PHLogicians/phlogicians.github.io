@@ -7,7 +7,7 @@ title: Home
 
 [SAT Vector Analyzer](/resources/sat-vector-analyzer.html)
 
-[逻辑学赋能专业学习 — 数学](/lectures/logic-help-math/)
+[Formal Logic (Part 1)](/lectures/formal-logic-notes.png)
 
 [Stanford Introduction to Logic](http://intrologic.stanford.edu/public/lessons.php)
 
