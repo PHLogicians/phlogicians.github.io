@@ -7,20 +7,41 @@
   "minima/skins/{{ site.minima.skin | default: 'auto' }}",
   "minima/initialize";
 
-// Override fonts to use browser defaults
+// Override fonts to use CSS variable for dynamic font switching
 body {
-  font-family: sans-serif !important;
+  font-family: var(--current-font), sans-serif !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: sans-serif !important;
+  font-family: var(--current-font), sans-serif !important;
   font-weight: bold !important;
 }
 
 // Optional: Override any other font specifications
 .site-title,
 .site-nav .page-link {
-  font-family: sans-serif !important;
+  font-family: var(--current-font), sans-serif !important;
+}
+
+// Apply to all text elements that should use the dynamic font
+.post-content,
+.page-content,
+p,
+span,
+div,
+li,
+a {
+  font-family: var(--current-font), sans-serif !important;
+}
+
+// Table of Contents elements
+.toc-nav,
+.toc-title,
+#toc-list,
+#toc-list a,
+#toc-list li,
+#toc-list ul {
+  font-family: var(--current-font), sans-serif !important;
 }
 
 // Optional: Ensure code blocks still use monospace

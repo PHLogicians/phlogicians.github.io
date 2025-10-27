@@ -5,6 +5,121 @@
 	{%- seo -%}
 	<link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
 	{%- feed_meta -%}
+	
+	<!-- Futura Std Font -->
+	<style>
+		@font-face {
+			font-family: 'Futura Std';
+			src: url('{{ "/assets/fonts/futura-std/FuturaStd-Book.otf" | relative_url }}') format('opentype');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Futura Std';
+			src: url('{{ "/assets/fonts/futura-std/FuturaStd-Bold.otf" | relative_url }}') format('opentype');
+			font-weight: bold;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Futura Std';
+			src: url('{{ "/assets/fonts/futura-std/FuturaStd-BookOblique.otf" | relative_url }}') format('opentype');
+			font-weight: normal;
+			font-style: italic;
+		}
+		@font-face {
+			font-family: 'Futura Std';
+			src: url('{{ "/assets/fonts/futura-std/FuturaStd-BoldOblique.otf" | relative_url }}') format('opentype');
+			font-weight: bold;
+			font-style: italic;
+		}
+		
+		@font-face {
+			font-family: 'Open Dyslexic Propo';
+			src: url('{{ "/assets/fonts/opendyslexic-propo/OpenDyslexicNerdFontPropo-Regular.otf" | relative_url }}') format('opentype');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Open Dyslexic Propo';
+			src: url('{{ "/assets/fonts/opendyslexic-propo/OpenDyslexicNerdFontPropo-Bold.otf" | relative_url }}') format('opentype');
+			font-weight: bold;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Open Dyslexic Propo';
+			src: url('{{ "/assets/fonts/opendyslexic-propo/OpenDyslexicNerdFontPropo-Italic.otf" | relative_url }}') format('opentype');
+			font-weight: normal;
+			font-style: italic;
+		}
+		@font-face {
+			font-family: 'Open Dyslexic Propo';
+			src: url('{{ "/assets/fonts/opendyslexic-propo/OpenDyslexicNerdFontPropo-BoldItalic.otf" | relative_url }}') format('opentype');
+			font-weight: bold;
+			font-style: italic;
+		}
+		
+		:root {
+			--current-font: 'Futura Std';
+		}
+		
+		.font-toggle-btn {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			width: 40px;
+			height: 40px;
+			border: 1px solid currentColor;
+			background: transparent;
+			border-radius: 6px;
+			cursor: pointer;
+			font-family: var(--current-font), sans-serif !important;
+			font-size: 14px;
+			color: currentColor;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.2s ease;
+			z-index: 1000;
+		}
+		
+		.font-toggle-btn:hover {
+			background-color: currentColor;
+			color: var(--minima-background-color, #fdfdfd);
+		}
+		
+		.font-toggle-btn .tooltip {
+			position: absolute;
+			bottom: 100%;
+			right: 0;
+			margin-bottom: 8px;
+			padding: 4px 8px;
+			background-color: currentColor;
+			color: var(--minima-background-color, #fdfdfd);
+			font-size: 12px;
+			border-radius: 4px;
+			white-space: nowrap;
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 0.2s ease;
+			font-family: var(--current-font), sans-serif !important;
+		}
+		
+		.font-toggle-btn:hover .tooltip {
+			opacity: 1;
+			visibility: visible;
+		}
+		
+		@media (prefers-color-scheme: dark) {
+			.font-toggle-btn {
+				color: #f6f5f4;
+			}
+			.font-toggle-btn:hover {
+				background-color: #f6f5f4;
+				color: #202020;
+			}
+		}
+	</style>
+	
 	{%- if jekyll.environment == 'production' and site.google_analytics -%}
 		{%- include google-analytics.html -%}
 	{%- endif -%}
