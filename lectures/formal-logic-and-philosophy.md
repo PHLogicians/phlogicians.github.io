@@ -95,5 +95,12 @@ S   P
 - Disjunctive preposition (either...or.../xor)
 - Negation (not): $\lnot p$
 - Conditional/hypothetical (if...then...): $p\to q$
+	- Modus ponens (肯定前件)
+	- Modus tollens (否定后件)
+		- $(p\to q)\equiv\lnot(q\to\lnot p)$
 
 ### Deduction of compound prepositions
+
+- $(p\to q,q\to r)\equiv r\to s$
+- $(p\lor q, p\to r, q\to s)\equiv r\lor s$
+- De Morgan's law: $\lnot(p\land q)\equiv\lnot p\lor q$ ($\lor$ is OR here (not XOR))
