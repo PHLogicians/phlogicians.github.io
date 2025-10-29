@@ -7,7 +7,7 @@ title: Home
 
 [SAT Vector Analyzer](/resources/sat-vector-analyzer.html)
 
-[Formal Logic (Part 1)](/lectures/formal-logic-notes.png)
+[Basic Formal Logic (full notes)](/lectures/basic-formal-logic/)
 
 [Stanford Introduction to Logic](http://intrologic.stanford.edu/public/lessons.php)
 

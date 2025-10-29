@@ -1,9 +1,11 @@
 ---
 layout: default
-title: Formal Logic and Philosophy
-permalink: /lectures/formal-logic-and-philosophy/
+title: Basic Formal Logic
+permalink: /lectures/basic-formal-logic/
 toc: true
 ---
+
+# Basic Formal Logic
 
 ## What is Logic
 
