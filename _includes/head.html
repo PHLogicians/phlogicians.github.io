@@ -69,7 +69,7 @@
 			width: 40px;
 			height: 40px;
 			border: 1px solid currentColor;
-			background: transparent;
+			background: var(--minima-background-color, #fdfdfd);
 			border-radius: 6px;
 			cursor: pointer;
 			font-family: var(--current-font), sans-serif !important;
@@ -115,6 +115,24 @@
 			}
 			.font-toggle-btn:hover {
 				background-color: #f6f5f4;
+				color: #202020;
+			}
+			.font-toggle-btn .tooltip {
+				background-color: #202020;
+				color: #f6f5f4;
+			}
+		}
+		
+		@media (prefers-color-scheme: light) {
+			.font-toggle-btn {
+				color: #202020;
+			}
+			.font-toggle-btn:hover {
+				background-color: #202020;
+				color: #fdfdfd;
+			}
+			.font-toggle-btn .tooltip {
+				background-color: #e8e8e8;
 				color: #202020;
 			}
 		}
