@@ -43,6 +43,39 @@ permalink: /about/
     'https://ph-ormula.github.io/easter-eggs/Jibba.png',
     'https://ph-ormula.github.io/easter-eggs/Jibba.png',
     'https://ph-ormula.github.io/easter-eggs/Jibba.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
+    'https://ph-ormula.github.io/easter-eggs/Jibba3.png',
     'https://ph-ormula.github.io/easter-eggs/Jibba2.png',
     'https://ph-ormula.github.io/easter-eggs/Jibba2.png',
     'https://ph-ormula.github.io/easter-eggs/Jibba2.png',
@@ -76,43 +109,11 @@ permalink: /about/
     'https://ph-ormula.github.io/easter-eggs/Jibba2.png',
     'https://ph-ormula.github.io/easter-eggs/Jibba2.png',
     'https://ph-ormula.github.io/easter-eggs/Jibba2.png',
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
-    'https://ph-ormula.github.io/easter-eggs/Jibba3.png'
     'https://ph-ormula.github.io/easter-eggs/Jibba4.jpg'
   ];
   var pick = imgs[Math.floor(Math.random() * imgs.length)];
   var el = document.getElementById('jibba-img');
   if (el) el.src = pick;
+  console.log("正在随机把一张 wzq 的图片选择出来")
 })();
 </script>
