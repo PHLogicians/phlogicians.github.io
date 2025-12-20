@@ -12,8 +12,8 @@ permalink: /about/
 (function() {
 var imgs = [
 { src: 'https://ph-ormula.github.io/easter-eggs/Jibba.png', weight: 33 },
-{ src: 'https://ph-ormula.github.io/easter-eggs/Jibba3.png', weight: 33 },
 { src: 'https://ph-ormula.github.io/easter-eggs/Jibba2.png', weight: 33 },
+{ src: 'https://ph-ormula.github.io/easter-eggs/Jibba3.png', weight: 33 },
 { src: 'https://ph-ormula.github.io/easter-eggs/Jibba4.jpg', weight: 2 },
 { src: 'https://ph-ormula.github.io/easter-eggs/Jibba%F0%9D%9C%8B.png', weight: 1 }
 ];
