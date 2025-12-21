@@ -129,18 +129,18 @@
 					},
 					colors: {
 						'gnome-bg': '#f6f5f4',
-						'gnome-bg-dark': '#303030',
+						'gnome-bg-dark': '#242424',
 						'gnome-header': '#ffffff',
-						'gnome-header-dark': '#242424',
+						'gnome-header-dark': '#303030',
 						'gnome-card': '#ffffff',
 						'gnome-card-dark': '#383838',
 						'gnome-accent': '#3584e4',
 						'gnome-accent-light': '#62a0ea',
-						'gnome-text': '#202020',
+						'gnome-text': '#2e3436',
 						'gnome-text-dark': '#eeeeee',
-						'gnome-text-secondary': '#606060',
+						'gnome-text-secondary': '#5e5c64',
 						'gnome-text-secondary-dark': '#c0c0c0',
-						'gnome-border': '#d7d7d7',
+						'gnome-border': '#cdc7c2',
 						'gnome-border-dark': '#505050',
 						success: '#26a269',
 						warning: '#f8e45c',
@@ -163,22 +163,22 @@
 				content-visibility: auto;
 			}
 			.card-transition {
-				transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+				transition: all 0.2s ease-in-out;
 			}
 			.input-focus {
 				@apply focus:ring-2 focus:ring-gnome-accent/30 focus:border-gnome-accent focus:outline-none;
 			}
 			.btn-primary {
-				@apply bg-gnome-accent hover:bg-gnome-accent-light text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center;
+				@apply bg-gnome-accent hover:bg-gnome-accent-light text-white font-bold py-1.5 px-6 rounded-md transition-colors duration-200 flex items-center justify-center text-sm shadow-sm;
 			}
 			.btn-secondary {
-				@apply bg-gnome-card dark:bg-gnome-card-dark border border-gnome-border dark:border-gnome-border-dark text-gnome-text dark:text-gnome-text-dark hover:bg-gray-100 dark:hover:bg-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center;
+				@apply bg-[#f4f4f4] dark:bg-[#454545] border border-gnome-border dark:border-gnome-border-dark text-gnome-text dark:text-gnome-text-dark hover:bg-gray-100 dark:hover:bg-[#505050] font-medium py-1.5 px-6 rounded-md transition-colors duration-200 flex items-center justify-center text-sm shadow-sm;
 			}
 			.btn-ghost {
-				@apply w-8 h-8 rounded-md flex items-center justify-center text-gnome-text-secondary dark:text-gnome-text-secondary-dark hover:bg-gray-200/60 dark:hover:bg-gray-500/20 transition-colors;
+				@apply w-8 h-8 rounded-md flex items-center justify-center text-gnome-text-secondary dark:text-gnome-text-secondary-dark hover:bg-black/5 dark:hover:bg-white/10 transition-colors;
 			}
 			.add-btn {
-				@apply w-8 h-8 rounded-md bg-gray-200 dark:bg-gray-700 text-gnome-text-secondary dark:text-gnome-text-secondary-dark flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95;
+				@apply w-8 h-8 rounded-lg text-gnome-text-secondary dark:text-gnome-text-secondary-dark flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-black/5 dark:hover:bg-white/10;
 			}
 						.plot-container {
 				min-height: 500px;
@@ -191,7 +191,7 @@
 				@apply visible opacity-100;
 			}
 			.input-field {
-				@apply w-full p-3 border border-gnome-border dark:border-gnome-border-dark rounded-lg resize-none input-focus transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gnome-bg-dark dark:text-gnome-text-dark;
+				@apply w-full p-3 border border-gnome-border dark:border-gnome-border-dark rounded-md resize-none input-focus transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-[#303030] dark:text-gnome-text-dark;
 			}
 			.large-input-field {
 				@apply input-field min-h-[180px];
@@ -200,7 +200,7 @@
 				@apply input-field min-h-[150px];
 			}
 			.section-title {
-				@apply text-lg font-bold flex items-center text-gnome-text dark:text-gnome-text-dark;
+				@apply text-base font-bold flex items-center text-gnome-text dark:text-gnome-text-dark;
 			}
 			.progress-container {
 				height: 8px;
@@ -244,40 +244,38 @@
 <body class="bg-gnome-bg dark:bg-gnome-bg-dark min-h-screen text-gnome-text dark:text-gnome-text-dark relative overflow-x-hidden">
 
 	<!-- 顶部导航栏 -->
-	<header class="bg-gnome-header dark:bg-gnome-header-dark border-b border-gnome-border dark:border-gnome-border-dark sticky top-0 z-50 h-[46px] flex items-center transition-colors duration-300">
-		<div class="container mx-auto px-4 flex justify-between items-center h-full">
-			<!-- Left: Branding/Icon -->
-			<div class="flex items-center justify-start w-1/3">
-				<i class="fa fa-cube text-gnome-accent text-lg"></i>
-			</div>
+	<header class="bg-gnome-header dark:bg-gnome-header-dark border-b border-gnome-border dark:border-gnome-border-dark sticky top-0 z-50 h-[46px] flex items-center justify-between transition-colors duration-300 px-3 w-full">
+		<!-- Left: Branding/Icon -->
+		<div class="flex items-center justify-start">
+			<i class="fa fa-cube text-gnome-accent text-lg"></i>
+		</div>
 
-			<!-- Center: Title -->
-			<div class="flex justify-center w-1/3">
-				<h1 class="text-base font-bold text-gnome-text dark:text-gnome-text-dark truncate">
-					SAT Vector Analyzer
-				</h1>
-			</div>
+		<!-- Center: Title -->
+		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+			<h1 class="text-base font-bold text-gnome-text dark:text-gnome-text-dark truncate">
+				SAT Vector Analyzer
+			</h1>
+		</div>
 
-			<!-- Right: Controls -->
-			<div class="flex items-center justify-end space-x-2 w-1/3">
-				<!-- Badge -->
-				<span class="hidden md:inline-flex items-center text-xs text-gnome-text-secondary dark:text-gnome-text-secondary-dark bg-gnome-bg dark:bg-gnome-card-dark border border-gnome-border dark:border-gnome-border-dark px-2 py-1 rounded-md">
-					Origin Vectors
+		<!-- Right: Controls -->
+		<div class="flex items-center justify-end space-x-2">
+			<!-- Badge -->
+			<span class="hidden md:inline-flex items-center text-xs text-gnome-text-secondary dark:text-gnome-text-secondary-dark bg-gnome-bg dark:bg-gnome-card-dark border border-gnome-border dark:border-gnome-border-dark px-2 py-1 rounded-md">
+				Origin Vectors
+			</span>
+			<!-- Font Toggle -->
+			<button id="font-toggle-btn" class="btn-ghost relative group">
+				<span class="font-serif">Aa</span>
+				<span class="absolute top-full mt-2 -translate-x-1/2 left-1/2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+					Change Font
 				</span>
-				<!-- Font Toggle -->
-				<button id="font-toggle-btn" class="btn-ghost relative group">
-					<span class="font-serif">Aa</span>
-					<span class="absolute top-full mt-2 -translate-x-1/2 left-1/2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
-						Change Font
-					</span>
-				</button>
-			</div>
+			</button>
 		</div>
 	</header>
 
-	<main class="container mx-auto px-4 py-10 relative z-10">
+	<main class="container mx-auto px-4 pt-8 relative z-10">
 		<!-- 顶部横幅 -->
-		<div class="bg-gnome-accent rounded-2xl p-8 mb-10 text-white relative overflow-hidden">
+		<div class="bg-gnome-accent rounded-lg p-8 mb-8 text-white relative overflow-hidden">
 			<div class="relative z-10">
 				<h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold mb-3">SAT Answer Prediction</h2>
 				<p class="max-w-2xl opacity-90">
@@ -290,10 +288,10 @@
 				</ul>
 			</div>
 		</div>
-		
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 			<!-- 左侧：添加句子区域 -->
-			<section class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 card-transition relative overflow-hidden">
+			<section class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 border border-gnome-border dark:border-gnome-border-dark relative overflow-hidden">
 				<div class="flex justify-between items-center mb-6 relative z-10">
 					<h2 class="section-title">
 						<i class="fa fa-comment-o text-gnome-accent mr-2"></i>
@@ -324,7 +322,7 @@
 			</section>
 
 			<!-- 中间：添加题干区域 -->
-			<section class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 card-transition relative overflow-hidden">
+			<section class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 border border-gnome-border dark:border-gnome-border-dark relative overflow-hidden">
 				<div class="flex justify-between items-center mb-6 relative z-10">
 					<h2 class="section-title">
 						<i class="fa fa-file-text-o text-gnome-accent mr-2"></i>
@@ -355,7 +353,7 @@
 			</section>
 
 			<!-- 右侧：添加选项区域 -->
-			<section class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 card-transition relative overflow-hidden">
+			<section class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 border border-gnome-border dark:border-gnome-border-dark relative overflow-hidden">
 				<div class="flex justify-between items-center mb-6 relative z-10">
 					<h2 class="section-title">
 						<i class="fa fa-list-ul text-gnome-accent mr-2"></i>
@@ -420,11 +418,11 @@
 		</div>
 
 		<!-- 模型选择和可视化按钮 -->
-		<div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+		<div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
 			<div class="w-full sm:w-auto relative">
 				<label for="model-selector" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Model:</label>
 				<div class="relative">
-					<select id="model-selector" class="block w-full sm:w-80 pl-3 pr-10 py-3 text-base border-gnome-border dark:border-gnome-border-dark bg-gnome-card dark:bg-gnome-card-dark text-gnome-text dark:text-gnome-text-dark focus:outline-none focus:ring-gnome-accent/30 focus:border-gnome-accent sm:text-sm rounded-lg input-focus appearance-none transition-all duration-200">
+					<select id="model-selector" class="block w-full sm:w-80 pl-3 pr-10 py-3 text-base border-gnome-border dark:border-gnome-border-dark bg-gnome-card dark:bg-gnome-card-dark text-gnome-text dark:text-gnome-text-dark focus:outline-none focus:ring-gnome-accent/30 focus:border-gnome-accent sm:text-sm rounded-md input-focus appearance-none transition-all duration-200">
 						<option value="Xenova/all-MiniLM-L6-v2" data-size="80MB" data-dim="384" class="model-option">
 							all-MiniLM-L6-v2
 							<span class="text-xs text-gray-500 ml-2">(Fast, 80MB, 384dim)</span>
@@ -463,7 +461,7 @@
 		</div>
 
 		<!-- 加载状态和结果显示 -->
-		<div class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 min-h-[500px] flex flex-col items-center justify-center overflow-hidden relative z-10">
+		<div class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl border border-gnome-border dark:border-gnome-border-dark p-6 min-h-[500px] flex flex-col items-center justify-center overflow-hidden relative z-10">
 
 			<div id="loading" class="text-center hidden relative z-10">
 				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gnome-accent mx-auto mb-6"></div>
@@ -617,7 +615,7 @@
 		</div>
 
 		<!-- 技术说明卡片 -->
-		<div class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 mt-8 relative z-10">
+		<div class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 mt-8 relative z-10 border border-gnome-border dark:border-gnome-border-dark">
 			<h3 class="text-lg font-semibold mb-4 flex items-center text-gnome-text dark:text-gnome-text-dark">
 				<i class="fa fa-cogs text-gnome-accent mr-2"></i>
 				技术细节
