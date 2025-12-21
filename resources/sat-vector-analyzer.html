@@ -111,67 +111,10 @@
 			font-family: var(--current-font), sans-serif !important;
 		}
 		
-		/* Font Toggle Button Styles */
-		.font-toggle-btn {
-			position: fixed;
-			bottom: 20px;
-			right: 20px;
-			width: 40px;
-			height: 40px;
-			border: 1px solid currentColor;
-			background: #fdfdfd;
-			border-radius: 6px;
-			cursor: pointer;
-			font-family: var(--current-font), sans-serif !important;
-			font-size: 14px;
-			color: #202020;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			transition: all 0.2s ease;
-			z-index: 1000;
-		}
-		
-		.font-toggle-btn:hover {
-			background-color: #202020;
-			color: #fdfdfd;
-		}
-		
-		.font-toggle-btn .tooltip {
-			position: absolute;
-			bottom: 100%;
-			right: 0;
-			margin-bottom: 8px;
-			padding: 4px 8px;
-			background-color: #e8e8e8;
-			color: #202020;
-			font-size: 12px;
-			border-radius: 4px;
-			white-space: nowrap;
-			opacity: 0;
-			visibility: hidden;
-			transition: opacity 0.2s ease;
-			font-family: var(--current-font), sans-serif !important;
-		}
-		
-		.font-toggle-btn:hover .tooltip {
-			opacity: 1;
-			visibility: visible;
-		}
-		
+		/* Font Toggle Button Styles - Moved to Header */
+
 		@media (prefers-color-scheme: dark) {
-			.font-toggle-btn {
-				background: #1a1a1a;
-				color: #f6f5f4;
-			}
-			.font-toggle-btn:hover {
-				background-color: #f6f5f4;
-				color: #202020;
-			}
-			.font-toggle-btn .tooltip {
-				background-color: #202020;
-				color: #f6f5f4;
-			}
+			/* Dark mode overrides handled by Tailwind */
 		}
 	</style>
 	<script src="https://cdn.tailwindcss.com"></script>
@@ -185,29 +128,30 @@
 						mono: ['JetBrains Mono', 'monospace'],
 					},
 					colors: {
-						primary: '#165DFF',
-						'primary-light': '#E8F3FF',
-						'primary-dark': '#0E42CC',
-						secondary: '#36CFC9',
-						accent: '#722ED1',
-						neutral: '#F5F7FA',
-						'neutral-dark': '#1a1a1a',
-						dark: '#1D2129',
-						'dark-lighter': '#2a2f3a',
-						light: '#FFFFFF',
-						border: '#E2E8F0',
-						'border-dark': '#404040',
-						success: '#52C41A',
-						info: '#1890FF',
-						warning: '#FAAD14',
-						vector: '#FF4D4F' // 向量线条颜色
+						'gnome-bg': '#f6f5f4',
+						'gnome-bg-dark': '#303030',
+						'gnome-header': '#ffffff',
+						'gnome-header-dark': '#242424',
+						'gnome-card': '#ffffff',
+						'gnome-card-dark': '#383838',
+						'gnome-accent': '#3584e4',
+						'gnome-accent-light': '#62a0ea',
+						'gnome-text': '#202020',
+						'gnome-text-dark': '#eeeeee',
+						'gnome-text-secondary': '#606060',
+						'gnome-text-secondary-dark': '#c0c0c0',
+						'gnome-border': '#d7d7d7',
+						'gnome-border-dark': '#505050',
+						success: '#26a269',
+						warning: '#f8e45c',
+						error: '#c01c28',
+						info: '#3584e4',
+						vector: '#c01c28'
 					},
 					boxShadow: {
-						'card': '0 10px 15px -3px rgba(22, 93, 255, 0.05), 0 4px 6px -2px rgba(22, 93, 255, 0.03)',
-						'card-hover': '0 20px 25px -5px rgba(22, 93, 255, 0.1), 0 10px 10px -5px rgba(22, 93, 255, 0.04)',
-						'button': '0 4px 14px 0 rgba(22, 93, 255, 0.3)',
-						'button-hover': '0 6px 20px 0 rgba(22, 93, 255, 0.4)',
-						'input': '0 2px 5px rgba(22, 93, 255, 0.05)',
+						'card-hover': '0 3px 6px rgba(0, 0, 0, 0.08)',
+						'button': 'none',
+						'button-hover': 'none',
 					}
 				}
 			}
@@ -218,34 +162,25 @@
 			.content-auto {
 				content-visibility: auto;
 			}
-			.blue-gradient {
-				background: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
-			}
-			.text-shadow {
-				text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-			}
 			.card-transition {
 				transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 			}
 			.input-focus {
-				@apply focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none;
+				@apply focus:ring-2 focus:ring-gnome-accent/30 focus:border-gnome-accent focus:outline-none;
 			}
 			.btn-primary {
-				@apply bg-primary hover:bg-primary-dark text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-button hover:shadow-button-hover flex items-center justify-center;
+				@apply bg-gnome-accent hover:bg-gnome-accent-light text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center;
 			}
 			.btn-secondary {
-				@apply bg-white border border-primary text-primary hover:bg-primary-light font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center;
+				@apply bg-gnome-card dark:bg-gnome-card-dark border border-gnome-border dark:border-gnome-border-dark text-gnome-text dark:text-gnome-text-dark hover:bg-gray-100 dark:hover:bg-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center;
+			}
+			.btn-ghost {
+				@apply w-8 h-8 rounded-md flex items-center justify-center text-gnome-text-secondary dark:text-gnome-text-secondary-dark hover:bg-gray-200/60 dark:hover:bg-gray-500/20 transition-colors;
 			}
 			.add-btn {
-				@apply w-10 h-10 rounded-full bg-primary-light text-primary flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-primary hover:text-white active:scale-95 shadow-sm;
+				@apply w-8 h-8 rounded-md bg-gray-200 dark:bg-gray-700 text-gnome-text-secondary dark:text-gnome-text-secondary-dark flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95;
 			}
-			.decorative-element {
-				position: absolute;
-				border-radius: 50%;
-				background: rgba(22, 93, 255, 0.05);
-				z-index: 0;
-			}
-			.plot-container {
+						.plot-container {
 				min-height: 500px;
 				width: 100%;
 			}
@@ -255,17 +190,8 @@
 			.model-option:hover .model-tooltip {
 				@apply visible opacity-100;
 			}
-			.text-gradient {
-				background-clip: text;
-				-webkit-background-clip: text;
-				color: transparent;
-				background-image: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
-			}
-			.card-hover-effect {
-				@apply transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1;
-			}
 			.input-field {
-				@apply w-full p-3 border border-border dark:border-border-dark rounded-lg resize-none input-focus transition-all duration-200 shadow-input placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-dark-lighter dark:text-white;
+				@apply w-full p-3 border border-gnome-border dark:border-gnome-border-dark rounded-lg resize-none input-focus transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gnome-bg-dark dark:text-gnome-text-dark;
 			}
 			.large-input-field {
 				@apply input-field min-h-[180px];
@@ -274,41 +200,7 @@
 				@apply input-field min-h-[150px];
 			}
 			.section-title {
-				@apply text-lg font-semibold flex items-center text-dark dark:text-white;
-			}
-			.floating {
-				animation: floating 6s ease-in-out infinite;
-			}
-			@keyframes floating {
-				0% { transform: translateY(0px); }
-				50% { transform: translateY(-10px); }
-				100% { transform: translateY(0px); }
-			}
-			.pulse {
-				animation: pulse 2s infinite;
-			}
-			@keyframes pulse {
-				0% { transform: scale(1); }
-				50% { transform: scale(1.05); }
-				100% { transform: scale(1); }
-			}
-			.gradient-border {
-				position: relative;
-				border-radius: 0.75rem;
-				z-index: 0;
-			}
-			.gradient-border::before {
-				content: "";
-				position: absolute;
-				inset: -2px;
-				border-radius: 0.85rem;
-				background: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
-				z-index: -1;
-				opacity: 0;
-				transition: opacity 0.3s ease;
-			}
-			.gradient-border:hover::before {
-				opacity: 1;
+				@apply text-lg font-bold flex items-center text-gnome-text dark:text-gnome-text-dark;
 			}
 			.progress-container {
 				height: 8px;
@@ -318,12 +210,12 @@
 			}
 			.progress-bar {
 				height: 100%;
-				background-color: #165DFF;
+				background-color: theme('colors.gnome-accent');
 				width: 0%;
 				transition: width 0.3s ease;
 			}
 			.prediction-card {
-				@apply bg-white dark:bg-dark-lighter border-2 rounded-xl p-6 mt-6 shadow-lg transform transition-all duration-500 hover:shadow-xl;
+				@apply bg-gnome-card dark:bg-gnome-card-dark border border-gnome-border dark:border-gnome-border-dark rounded-xl p-6 mt-6;
 			}
 			.prediction-card.primary {
 				@apply border-success;
@@ -349,35 +241,45 @@
 		}
 	</style>
 </head>
-<body class="bg-neutral dark:bg-neutral-dark min-h-screen text-dark dark:text-gray-100 relative overflow-x-hidden">
-	<!-- 装饰性蓝色元素 -->
-	<div class="decorative-element w-64 h-64 top-20 -left-32 floating"></div>
-	<div class="decorative-element w-96 h-96 bottom-20 -right-48 floating" style="animation-delay: 2s;"></div>
-	<div class="decorative-element w-32 h-32 top-1/3 right-1/4 floating" style="animation-delay: 4s;"></div>
-	
+<body class="bg-gnome-bg dark:bg-gnome-bg-dark min-h-screen text-gnome-text dark:text-gnome-text-dark relative overflow-x-hidden">
+
 	<!-- 顶部导航栏 -->
-	<header class="bg-white/80 dark:bg-dark-lighter/90 backdrop-blur-md border-b border-border dark:border-border-dark sticky top-0 z-50 shadow-sm transition-all duration-300">
-		<div class="container mx-auto px-4 py-4 flex justify-between items-center relative z-10">
-			<h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold flex items-center">
-				<i class="fa fa-cube text-primary mr-3 text-xl"></i>
-				<span class="text-gradient">SAT Vector Analyzer</span>
-			</h1>
-			<div class="flex items-center space-x-4">
-				<span class="hidden md:inline-flex items-center text-sm text-gray-600 dark:text-gray-300 bg-primary-light/50 dark:bg-primary-dark/30 px-3 py-1 rounded-full">
-					<i class="fa fa-check-circle text-success mr-1"></i>
-					With Origin Vectors
+	<header class="bg-gnome-header dark:bg-gnome-header-dark border-b border-gnome-border dark:border-gnome-border-dark sticky top-0 z-50 h-[46px] flex items-center transition-colors duration-300">
+		<div class="container mx-auto px-4 flex justify-between items-center h-full">
+			<!-- Left: Branding/Icon -->
+			<div class="flex items-center justify-start w-1/3">
+				<i class="fa fa-cube text-gnome-accent text-lg"></i>
+			</div>
+
+			<!-- Center: Title -->
+			<div class="flex justify-center w-1/3">
+				<h1 class="text-base font-bold text-gnome-text dark:text-gnome-text-dark truncate">
+					SAT Vector Analyzer
+				</h1>
+			</div>
+
+			<!-- Right: Controls -->
+			<div class="flex items-center justify-end space-x-2 w-1/3">
+				<!-- Badge -->
+				<span class="hidden md:inline-flex items-center text-xs text-gnome-text-secondary dark:text-gnome-text-secondary-dark bg-gnome-bg dark:bg-gnome-card-dark border border-gnome-border dark:border-gnome-border-dark px-2 py-1 rounded-md">
+					Origin Vectors
 				</span>
+				<!-- Font Toggle -->
+				<button id="font-toggle-btn" class="btn-ghost relative group">
+					<span class="font-serif">Aa</span>
+					<span class="absolute top-full mt-2 -translate-x-1/2 left-1/2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+						Change Font
+					</span>
+				</button>
 			</div>
 		</div>
 	</header>
 
 	<main class="container mx-auto px-4 py-10 relative z-10">
 		<!-- 顶部横幅 -->
-		<div class="blue-gradient rounded-2xl p-8 mb-10 text-white shadow-lg relative overflow-hidden transform transition-all duration-500 hover:shadow-xl">
-			<div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
-			<div class="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full -ml-20 -mb-20"></div>
+		<div class="bg-gnome-accent rounded-2xl p-8 mb-10 text-white relative overflow-hidden">
 			<div class="relative z-10">
-				<h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold mb-3 text-shadow">SAT Answer Prediction</h2>
+				<h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold mb-3">SAT Answer Prediction</h2>
 				<p class="max-w-2xl opacity-90">
 					Visualizing vertices with vectors from origin (0,0,0) and using cosine similarity:
 				</p>
@@ -391,24 +293,23 @@
 		
 		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
 			<!-- 左侧：添加句子区域 -->
-			<section class="bg-white dark:bg-dark-lighter rounded-xl p-6 shadow-card card-transition gradient-border card-hover-effect relative overflow-hidden">
-				<div class="absolute top-0 right-0 w-32 h-32 bg-primary-light/30 rounded-full -mr-16 -mt-16"></div>
+			<section class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 card-transition relative overflow-hidden">
 				<div class="flex justify-between items-center mb-6 relative z-10">
 					<h2 class="section-title">
-						<i class="fa fa-comment-o text-primary mr-2"></i>
+						<i class="fa fa-comment-o text-gnome-accent mr-2"></i>
 						Sentence Input
 					</h2>
 					<button id="add-sentence" class="add-btn">
 						<i class="fa fa-plus"></i>
 					</button>
 				</div>
-				
+
 				<div id="sentences-container" class="space-y-6 relative z-10">
 					<div class="sentence-item group">
 						<div class="flex items-start">
-							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">1</div>
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-gnome-accent/20 text-gnome-accent flex items-center justify-center text-sm mt-1.5 mr-3">1</div>
 							<div class="flex-grow relative">
-								<textarea 
+								<textarea
 									class="large-input-field"
 									placeholder="Enter sentence here..."
 									data-sentence
@@ -423,24 +324,23 @@
 			</section>
 
 			<!-- 中间：添加题干区域 -->
-			<section class="bg-white dark:bg-dark-lighter rounded-xl p-6 shadow-card card-transition gradient-border card-hover-effect relative overflow-hidden">
-				<div class="absolute top-0 right-0 w-32 h-32 bg-primary-light/30 rounded-full -mr-16 -mt-16"></div>
+			<section class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 card-transition relative overflow-hidden">
 				<div class="flex justify-between items-center mb-6 relative z-10">
 					<h2 class="section-title">
-						<i class="fa fa-file-text-o text-primary mr-2"></i>
+						<i class="fa fa-file-text-o text-gnome-accent mr-2"></i>
 						Question Stem Input
 					</h2>
 					<button id="add-stem" class="add-btn">
 						<i class="fa fa-plus"></i>
 					</button>
 				</div>
-				
+
 				<div id="stems-container" class="space-y-6 relative z-10">
 					<div class="stem-item group">
 						<div class="flex items-start">
-							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">1</div>
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-gnome-accent/20 text-gnome-accent flex items-center justify-center text-sm mt-1.5 mr-3">1</div>
 							<div class="flex-grow relative">
-								<textarea 
+								<textarea
 									class="medium-input-field p-4"
 									placeholder="Enter question stem here..."
 									data-stem
@@ -455,21 +355,20 @@
 			</section>
 
 			<!-- 右侧：添加选项区域 -->
-			<section class="bg-white dark:bg-dark-lighter rounded-xl p-6 shadow-card card-transition gradient-border card-hover-effect relative overflow-hidden">
-				<div class="absolute top-0 right-0 w-32 h-32 bg-primary-light/30 rounded-full -mr-16 -mt-16"></div>
+			<section class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 card-transition relative overflow-hidden">
 				<div class="flex justify-between items-center mb-6 relative z-10">
 					<h2 class="section-title">
-						<i class="fa fa-list-ul text-primary mr-2"></i>
+						<i class="fa fa-list-ul text-gnome-accent mr-2"></i>
 						Option Input
 					</h2>
 				</div>
-				
+
 				<div id="options-container" class="space-y-4 relative z-10">
 					<div class="option-item group">
 						<div class="flex items-start">
-							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">A</div>
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-gnome-accent/20 text-gnome-accent flex items-center justify-center text-sm mt-1.5 mr-3">A</div>
 							<div class="flex-grow relative">
-								<textarea 
+								<textarea
 									class="input-field min-h-[80px]"
 									placeholder="Option A..."
 									data-option
@@ -477,12 +376,12 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="option-item group">
 						<div class="flex items-start">
-							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">B</div>
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-gnome-accent/20 text-gnome-accent flex items-center justify-center text-sm mt-1.5 mr-3">B</div>
 							<div class="flex-grow relative">
-								<textarea 
+								<textarea
 									class="input-field min-h-[80px]"
 									placeholder="Option B..."
 									data-option
@@ -490,12 +389,12 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="option-item group">
 						<div class="flex items-start">
-							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">C</div>
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-gnome-accent/20 text-gnome-accent flex items-center justify-center text-sm mt-1.5 mr-3">C</div>
 							<div class="flex-grow relative">
-								<textarea 
+								<textarea
 									class="input-field min-h-[80px]"
 									placeholder="Option C..."
 									data-option
@@ -503,12 +402,12 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="option-item group">
 						<div class="flex items-start">
-							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm mt-1.5 mr-3">D</div>
+							<div class="flex-shrink-0 w-6 h-6 rounded-full bg-gnome-accent/20 text-gnome-accent flex items-center justify-center text-sm mt-1.5 mr-3">D</div>
 							<div class="flex-grow relative">
-								<textarea 
+								<textarea
 									class="input-field min-h-[80px]"
 									placeholder="Option D..."
 									data-option
@@ -519,23 +418,23 @@
 				</div>
 			</section>
 		</div>
-		
+
 		<!-- 模型选择和可视化按钮 -->
 		<div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
 			<div class="w-full sm:w-auto relative">
 				<label for="model-selector" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Model:</label>
 				<div class="relative">
-					<select id="model-selector" class="block w-full sm:w-80 pl-3 pr-10 py-3 text-base border border-gray-300 dark:border-border-dark bg-white dark:bg-dark-lighter dark:text-white focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg input-focus appearance-none shadow-input transition-all duration-200 hover:border-primary/50">
+					<select id="model-selector" class="block w-full sm:w-80 pl-3 pr-10 py-3 text-base border-gnome-border dark:border-gnome-border-dark bg-gnome-card dark:bg-gnome-card-dark text-gnome-text dark:text-gnome-text-dark focus:outline-none focus:ring-gnome-accent/30 focus:border-gnome-accent sm:text-sm rounded-lg input-focus appearance-none transition-all duration-200">
 						<option value="Xenova/all-MiniLM-L6-v2" data-size="80MB" data-dim="384" class="model-option">
-							all-MiniLM-L6-v2 
+							all-MiniLM-L6-v2
 							<span class="text-xs text-gray-500 ml-2">(Fast, 80MB, 384dim)</span>
 						</option>
 						<option value="Xenova/all-MiniLM-L12-v2" data-size="160MB" data-dim="384" class="model-option">
-							all-MiniLM-L12-v2 
+							all-MiniLM-L12-v2
 							<span class="text-xs text-gray-500 ml-2">(Balanced, 160MB, 384dim)</span>
 						</option>
 						<option value="Xenova/all-mpnet-base-v2" data-size="420MB" data-dim="768" class="model-option">
-							all-mpnet-base-v2 
+							all-mpnet-base-v2
 							<span class="text-xs text-gray-500 ml-2">(Accurate, 420MB, 768dim)</span>
 						</option>
 					</select>
@@ -550,9 +449,9 @@
 					⚠️ Large model: First download may take several minutes
 				</p>
 			</div>
-			
+
 			<div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-				<button id="generate-visualization" class="btn-primary pulse">
+				<button id="generate-visualization" class="btn-primary">
 					<i class="fa fa-line-chart mr-2"></i>
 					Generate Analysis & Predict Answers
 				</button>
@@ -562,58 +461,57 @@
 				</button>
 			</div>
 		</div>
-		
+
 		<!-- 加载状态和结果显示 -->
-		<div class="bg-white dark:bg-dark-lighter rounded-xl p-6 shadow-card min-h-[500px] flex flex-col items-center justify-center overflow-hidden relative z-10 card-hover-effect">
-			<div class="absolute top-0 right-0 w-48 h-48 bg-primary-light/20 rounded-full -mr-24 -mt-24"></div>
-			
+		<div class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 min-h-[500px] flex flex-col items-center justify-center overflow-hidden relative z-10">
+
 			<div id="loading" class="text-center hidden relative z-10">
-				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mx-auto mb-6"></div>
+				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gnome-accent mx-auto mb-6"></div>
 				<p class="text-gray-600 dark:text-gray-300 text-lg">Processing data...</p>
 				<p class="text-gray-500 dark:text-gray-400 text-sm mt-2">Calculating vectors, geometric shapes, and cosine similarity</p>
 			</div>
-			
+
 			<div id="library-loading" class="text-center hidden relative z-10">
-				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mx-auto mb-6"></div>
+				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gnome-accent mx-auto mb-6"></div>
 				<p class="text-gray-600 dark:text-gray-300 text-lg">Loading components...</p>
 			</div>
-			
+
 			<div id="model-loading" class="text-center hidden relative z-10">
-				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mx-auto mb-6"></div>
+				<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gnome-accent mx-auto mb-6"></div>
 				<p class="text-gray-600 dark:text-gray-300 text-lg">Loading <span id="current-model-name">sentence-transformers model</span>...</p>
 				<p class="text-gray-500 dark:text-gray-400 text-sm mt-2" id="model-size-info">Approximately 80MB, only needs to download once</p>
 			</div>
-			
+
 			<div id="initial-message" class="text-center text-gray-500 dark:text-gray-400 max-w-lg px-4 relative z-10">
-				<div class="w-20 h-20 bg-primary-light dark:bg-primary-dark/30 rounded-full flex items-center justify-center mx-auto mb-6 floating">
-					<i class="fa fa-cube text-4xl text-primary"></i>
+				<div class="w-20 h-20 bg-gnome-accent/20 rounded-full flex items-center justify-center mx-auto mb-6">
+					<i class="fa fa-cube text-4xl text-gnome-accent"></i>
 				</div>
-				<h3 class="text-xl font-medium mb-3 text-dark dark:text-white">Ready to Analyze & Predict</h3>
+				<h3 class="text-xl font-medium mb-3 text-gnome-text dark:text-gnome-text-dark">Ready to Analyze & Predict</h3>
 				<p>Enter sentences, question stems, and options, then generate analysis. Each point will be displayed with a vector from (0,0,0).</p>
-				<div class="mt-4 p-3 bg-primary-light/50 dark:bg-primary-dark/30 rounded-lg inline-block">
-					<p class="text-sm text-primary dark:text-blue-400 flex items-center">
+				<div class="mt-4 p-3 bg-gnome-accent/20 rounded-lg inline-block">
+					<p class="text-sm text-gnome-accent flex items-center">
 						<i class="fa fa-lightbulb-o mr-1"></i>
 						<span>Higher cosine similarity = More relevant</span>
 					</p>
 				</div>
 			</div>
-			
+
 			<div id="error" class="text-center text-red-500 p-6 hidden max-w-lg relative z-10">
 				<div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
 					<i class="fa fa-exclamation-triangle text-2xl text-red-500"></i>
 				</div>
 				<p id="error-message" class="font-medium"></p>
 			</div>
-			
+
 			<div id="result" class="w-full hidden p-4 relative z-10">
 				<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-					<h3 class="text-lg font-semibold dark:text-white">Interactive 3D Vector Visualization</h3>
+					<h3 class="text-lg font-semibold text-gnome-text dark:text-gnome-text-dark">Interactive 3D Vector Visualization</h3>
 					<div class="flex flex-wrap gap-2">
-						<div class="text-sm bg-primary-light/70 dark:bg-primary-dark/30 text-primary dark:text-blue-400 px-3 py-1 rounded-full flex items-center">
+						<div class="text-sm bg-gnome-accent/20 text-gnome-accent px-3 py-1 rounded-full flex items-center">
 							<i class="fa fa-check-circle mr-1"></i>
 							<span id="used-model-display">sentence-transformers</span>
 						</div>
-						<div class="text-sm bg-primary-light/70 dark:bg-primary-dark/30 text-primary dark:text-blue-400 px-3 py-1 rounded-full flex items-center">
+						<div class="text-sm bg-gnome-accent/20 text-gnome-accent px-3 py-1 rounded-full flex items-center">
 							<i class="fa fa-arrows mr-1"></i>
 							<span>Drag to rotate</span>
 						</div>
@@ -622,70 +520,70 @@
 						</div>
 					</div>
 				</div>
-				<div class="border border-border dark:border-border-dark rounded-lg overflow-hidden bg-neutral/50 dark:bg-neutral-dark/50 p-2 shadow-input">
+				<div class="border border-gnome-border dark:border-gnome-border-dark rounded-lg overflow-hidden bg-gnome-bg dark:bg-gnome-bg-dark/50 p-2">
 					<div id="plotly-container" class="plot-container"></div>
 				</div>
-				
+
 				<!-- 三种距离计算的预测结果 -->
 				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
 					<!-- 1. 三维空间中选项点到题目逻辑空间的距离 -->
 					<div id="prediction-geometry" class="prediction-card primary">
-						<h3 class="text-xl font-semibold mb-4 flex items-center dark:text-white">
+						<h3 class="text-xl font-semibold mb-4 flex items-center text-gnome-text dark:text-gnome-text-dark">
 							<i class="fa fa-cube text-success dark:text-green-400 mr-2"></i>
 							<span id="geometry-type">3D空间距离</span>
 						</h3>
-						
+
 						<div class="mb-4">
 							<p class="text-gray-700 dark:text-gray-300 mb-2">三维空间中最接近<span id="geometry-reference">题目逻辑空间</span>的选项：</p>
 							<div id="best-option-geometry" class="p-4 bg-success/10 border border-success rounded-lg font-medium"></div>
 						</div>
-						
+
 						<h4 class="font-medium mb-3 dark:text-gray-200">选项到<span id="geometry-label">题目逻辑空间</span>的距离：</h4>
 						<div class="space-y-3" id="option-distances-geometry">
 							<!-- 选项距离将在这里动态生成 -->
 						</div>
 					</div>
-					
+
 					<!-- 2. 768高维空间中选项点到题目逻辑空间的距离 -->
 					<div id="prediction-highdim-logic" class="prediction-card secondary">
-						<h3 class="text-xl font-semibold mb-4 flex items-center dark:text-white">
+						<h3 class="text-xl font-semibold mb-4 flex items-center text-gnome-text dark:text-gnome-text-dark">
 							<i class="fa fa-sitemap text-info dark:text-blue-400 mr-2"></i>
 							高维空间距离 (768维)
 						</h3>
-						
+
 						<div class="mb-4">
 							<p class="text-gray-700 dark:text-gray-300 mb-2">高维空间中最接近题目逻辑空间的选项：</p>
 							<div id="best-option-logic" class="p-4 bg-info/10 border border-info rounded-lg font-medium"></div>
 						</div>
-						
+
 						<h4 class="font-medium mb-3 dark:text-gray-200">选项到题目逻辑空间的距离：</h4>
 						<div class="space-y-3" id="option-distances-logic">
 							<!-- 选项距离将在这里动态生成 -->
 						</div>
 					</div>
-					
+
 					<!-- 3. 合并句子大段落向量与选项的余弦相似度 -->
 					<div id="prediction-combined" class="prediction-card tertiary">
-						<h3 class="text-xl font-semibold mb-4 flex items-center dark:text-white">
+						<h3 class="text-xl font-semibold mb-4 flex items-center text-gnome-text dark:text-gnome-text-dark">
 							<i class="fa fa-compress text-warning dark:text-yellow-400 mr-2"></i>
 							合并句子向量相似度
 						</h3>
-						
+
 						<div class="mb-4">
 							<p class="text-gray-700 dark:text-gray-300 mb-2">与合并句子大段落向量余弦相似度最高的选项：</p>
 							<div id="best-option-combined" class="p-4 bg-warning/10 border border-warning rounded-lg font-medium"></div>
 						</div>
-						
+
 						<h4 class="font-medium mb-3 dark:text-gray-200">与合并句子大段落的余弦相似度：</h4>
 						<div class="space-y-3" id="option-distances-combined">
 							<!-- 选项相似度将在这里动态生成 -->
 						</div>
 					</div>
 				</div>
-				
-				<div class="mt-6 p-4 bg-primary-light/20 dark:bg-primary-dark/20 rounded-lg">
-					<h4 class="font-medium mb-2 flex items-center dark:text-white">
-						<i class="fa fa-info-circle text-primary mr-2"></i>
+
+				<div class="mt-6 p-4 bg-gnome-accent/10 dark:bg-gnome-accent/20 rounded-lg">
+					<h4 class="font-medium mb-2 flex items-center text-gnome-text dark:text-gnome-text-dark">
+						<i class="fa fa-info-circle text-gnome-accent mr-2"></i>
 						可视化与指标解释
 					</h4>
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -717,28 +615,28 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- 技术说明卡片 -->
-		<div class="bg-white dark:bg-dark-lighter rounded-xl p-6 shadow-card mt-8 relative z-10 card-hover-effect">
-			<h3 class="text-lg font-semibold mb-4 flex items-center dark:text-white">
-				<i class="fa fa-cogs text-primary mr-2"></i>
+		<div class="bg-gnome-card dark:bg-gnome-card-dark rounded-xl p-6 mt-8 relative z-10">
+			<h3 class="text-lg font-semibold mb-4 flex items-center text-gnome-text dark:text-gnome-text-dark">
+				<i class="fa fa-cogs text-gnome-accent mr-2"></i>
 				技术细节
 			</h3>
 			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-				<div class="p-4 bg-neutral dark:bg-neutral-dark rounded-lg">
-					<h4 class="font-medium text-primary dark:text-blue-400 mb-2">向量生成</h4>
+				<div class="p-4 bg-gnome-bg dark:bg-gnome-bg-dark rounded-lg">
+					<h4 class="font-medium text-gnome-accent dark:text-blue-400 mb-2">向量生成</h4>
 					<p class="text-gray-600 dark:text-gray-300 text-sm">
 						使用最先进的句子转换器将文本转换为捕获语义和上下文的高维向量。
 					</p>
 				</div>
-				<div class="p-4 bg-neutral dark:bg-neutral-dark rounded-lg">
-					<h4 class="font-medium text-primary dark:text-blue-400 mb-2">向量可视化</h4>
+				<div class="p-4 bg-gnome-bg dark:bg-gnome-bg-dark rounded-lg">
+					<h4 class="font-medium text-gnome-accent dark:text-blue-400 mb-2">向量可视化</h4>
 					<p class="text-gray-600 dark:text-gray-300 text-sm">
 						每个数据点都显示有从坐标原点(0,0,0)出发的向量，展示每个点在3D空间中的位置和方向关系。
 					</p>
 				</div>
-				<div class="p-4 bg-neutral dark:bg-neutral-dark rounded-lg">
-					<h4 class="font-medium text-primary dark:text-blue-400 mb-2">余弦相似度</h4>
+				<div class="p-4 bg-gnome-bg dark:bg-gnome-bg-dark rounded-lg">
+					<h4 class="font-medium text-gnome-accent dark:text-blue-400 mb-2">余弦相似度</h4>
 					<p class="text-gray-600 dark:text-gray-300 text-sm">
 						测量高维空间中两个向量之间夹角的余弦值，提供文本间语义相似度的度量。
 					</p>
@@ -747,22 +645,22 @@
 		</div>
 	</main>
 
-	<footer class="bg-white dark:bg-dark-lighter border-t border-border dark:border-border-dark mt-12 py-8 relative z-10">
+	<footer class="bg-gnome-card dark:bg-gnome-card-dark border-t border-gnome-border dark:border-gnome-border-dark mt-12 py-8 relative z-10">
 		<div class="container mx-auto px-4">
 			<div class="flex flex-col md:flex-row justify-between items-center">
 				<div class="mb-4 md:mb-0">
 					<p class="text-gray-500 dark:text-gray-400 text-sm">© 2023 SAT向量分析工具（带原点向量）。保留所有权利。</p>
 				</div>
 				<div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
-					<a href="#" class="text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-blue-400 transition-colors duration-200">
+					<a href="#" class="text-gray-400 dark:text-gray-500 hover:text-gnome-accent dark:hover:text-blue-400 transition-colors duration-200">
 						<i class="fa fa-question-circle"></i>
 						<span class="ml-1">帮助</span>
 					</a>
-					<a href="https://www.sbert.net/" target="_blank" class="text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-blue-400 transition-colors duration-200">
+					<a href="https://www.sbert.net/" target="_blank" class="text-gray-400 dark:text-gray-500 hover:text-gnome-accent dark:hover:text-blue-400 transition-colors duration-200">
 						<i class="fa fa-external-link"></i>
 						<span class="ml-1">sentence-transformers</span>
 					</a>
-					<a href="https://scipy.org/" target="_blank" class="text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-blue-400 transition-colors duration-200">
+					<a href="https://scipy.org/" target="_blank" class="text-gray-400 dark:text-gray-500 hover:text-gnome-accent dark:hover:text-blue-400 transition-colors duration-200">
 						<i class="fa fa-calculator"></i>
 						<span class="ml-1">SciPy（计算）</span>
 					</a>
@@ -2023,23 +1921,21 @@ embeddings_3d.tolist()
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			const root = document.documentElement;
-			const toggleBtn = document.createElement('button');
-			toggleBtn.className = 'font-toggle-btn';
-			toggleBtn.innerHTML = 'Aa<span class="tooltip">change reading font</span>';
-			
+			const toggleBtn = document.getElementById('font-toggle-btn');
+
 			// Load saved font preference or default to Futura
 			const savedFont = localStorage.getItem('preferredFont') || 'Futura Std';
 			root.style.setProperty('--current-font', `'${savedFont}'`);
-			
-			toggleBtn.addEventListener('click', function() {
-				const currentFont = root.style.getPropertyValue('--current-font').replace(/['"]/g, '');
-				const newFont = currentFont === 'Futura Std' ? 'Open Dyslexic Propo' : 'Futura Std';
-				
-				root.style.setProperty('--current-font', `'${newFont}'`);
-				localStorage.setItem('preferredFont', newFont);
-			});
-			
-			document.body.appendChild(toggleBtn);
+
+			if (toggleBtn) {
+				toggleBtn.addEventListener('click', function() {
+					const currentFont = root.style.getPropertyValue('--current-font').replace(/['"]/g, '');
+					const newFont = currentFont === 'Futura Std' ? 'Open Dyslexic Propo' : 'Futura Std';
+
+					root.style.setProperty('--current-font', `'${newFont}'`);
+					localStorage.setItem('preferredFont', newFont);
+				});
+			}
 		});
 	</script>
 </body>
