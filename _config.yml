@@ -11,6 +11,7 @@ description: Website for PHLogicians
 url: "https://phlogicians.github.io"
 exclude:
   - README.md
+  - GEMINI.md
   - _site/
   - .sass-cache/
   - .jekyll-cache/
