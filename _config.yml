@@ -1,4 +1,8 @@
-theme: minima
+theme: practical-club-website-template
+title: PHLogicians
+description: Website for PHLogicians
+url: "https://phlogicians.github.io"
+
 minima:
   skin: auto
   nav_pages:
@@ -6,9 +10,15 @@ minima:
     - lectures.md
     - resources.md
     - ph-ormula.md
-title: PHLogicians
-description: Website for PHLogicians
-url: "https://phlogicians.github.io"
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-feed
+
+kramdown:
+  math_engine: mathjax
+  input: GFM
+
 exclude:
   - README.md
   - GEMINI.md
@@ -18,5 +28,3 @@ exclude:
   - .jekyll-metadata
   - .bundle/
   - Gemfile.lock
-kramdown:
-  math_engine: mathjax

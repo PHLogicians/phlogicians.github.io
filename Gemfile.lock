@@ -1,4 +1,13 @@
 GIT
+  remote: https://github.com/Daniel-42-z/practical-club-website-template.git
+  revision: 591d6187b69aa86007c03d6bf56a89bf5de9a210
+  specs:
+    practical-club-website-template (0.1.0)
+      jekyll (>= 3.9, < 5.0)
+      jekyll-feed (~> 0.12)
+      jekyll-seo-tag (~> 2.0)
+
+GIT
   remote: https://github.com/jekyll/minima.git
   revision: bf9ef989246b63536e9db61082f663f1a6d4d9ce
   specs:
@@ -21,14 +30,14 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0)
     eventmachine (1.2.7)
-    ffi (1.17.2-aarch64-linux-gnu)
-    ffi (1.17.2-aarch64-linux-musl)
-    ffi (1.17.2-arm-linux-gnu)
-    ffi (1.17.2-arm-linux-musl)
-    ffi (1.17.2-arm64-darwin)
-    ffi (1.17.2-x86_64-darwin)
-    ffi (1.17.2-x86_64-linux-gnu)
-    ffi (1.17.2-x86_64-linux-musl)
+    ffi (1.17.3-aarch64-linux-gnu)
+    ffi (1.17.3-aarch64-linux-musl)
+    ffi (1.17.3-arm-linux-gnu)
+    ffi (1.17.3-arm-linux-musl)
+    ffi (1.17.3-arm64-darwin)
+    ffi (1.17.3-x86_64-darwin)
+    ffi (1.17.3-x86_64-linux-gnu)
+    ffi (1.17.3-x86_64-linux-musl)
     forwardable-extended (2.6.0)
     google-protobuf (4.33.2)
       bigdecimal
@@ -100,7 +109,7 @@ GEM
     rb-inotify (0.11.1)
       ffi (~> 1.0)
     rexml (3.4.4)
-    rouge (4.6.1)
+    rouge (4.7.0)
     safe_yaml (1.0.5)
     sass-embedded (1.97.1-aarch64-linux-gnu)
       google-protobuf (~> 4.31)
@@ -140,6 +149,7 @@ DEPENDENCIES
   kramdown-parser-gfm
   logger
   minima!
+  practical-club-website-template!
   webrick
 
 BUNDLED WITH
